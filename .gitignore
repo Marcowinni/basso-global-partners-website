@@ -1,0 +1,16 @@
+# ── Legacy / internal source — NOT part of the deployed site, keep out of (public) repo ──
+Basso_Website_v101.html
+BGP_Website_Script_vS.docx
+bilder/
+
+# ── Local preview / test / tooling artifacts ──
+.playwright-mcp/
+_sample.pdf
+_stripped.html
+*.log
+
+# ── OS / editor ──
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

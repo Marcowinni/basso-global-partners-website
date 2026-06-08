@@ -1,0 +1,70 @@
+/* Basso Global Partners — subtle motion layer.
+   Additive only: no layout or color changes. Everything degrades to the
+   static design when JS is off or the user prefers reduced motion. */
+
+/* ── Scroll reveal (class applied by enhance.js) ────────────────── */
+.reveal{opacity:0}
+.reveal.is-visible{animation:revealUp .65s cubic-bezier(.2,.6,.2,1) both}
+@keyframes revealUp{
+  from{opacity:0;transform:translateY(16px)}
+  to{opacity:1;transform:none}
+}
+
+/* ── Page entrance (applied on navigation) ──────────────────────── */
+.page.active{animation:pageIn .5s ease both}
+@keyframes pageIn{
+  from{opacity:0;transform:translateY(8px)}
+  to{opacity:1;transform:none}
+}
+
+/* ── Accordion / pillar open fade ───────────────────────────────── */
+.pillar-card.active .pillar-detail,
+.strategy-pillar.open .strategy-pillar-body{
+  animation:softDrop .35s ease both;
+}
+@keyframes softDrop{
+  from{opacity:0;transform:translateY(-6px)}
+  to{opacity:1;transform:none}
+}
+
+/* ── Gentle hover lift on tactile cards ─────────────────────────── */
+.team-preview-card,.param-card,.news-card{
+  transition:transform .25s ease, box-shadow .25s ease;
+}
+@media (hover:hover){
+  .team-preview-card:hover,
+  .param-card:hover,
+  .news-card:hover{
+    transform:translateY(-3px);
+    box-shadow:0 12px 30px rgba(11,58,109,.10);
+  }
+}
+
+/* ── Buttons: micro lift ────────────────────────────────────────── */
+.btn-primary,.btn-ghost{transition:background .2s, color .2s, border-color .2s, transform .15s ease}
+@media (hover:hover){
+  .btn-primary:hover,.btn-ghost:hover{transform:translateY(-1px)}
+}
+
+/* ── HQ map marker: slow on-brand pulse (Zurich) ────────────────── */
+.hq-marker::before{
+  content:'';position:absolute;inset:-4px;border-radius:50%;
+  border:2px solid rgba(201,168,76,.55);pointer-events:none;
+  animation:hqPulse 2.8s ease-out infinite;
+}
+@keyframes hqPulse{
+  0%{transform:scale(1);opacity:.7}
+  70%{transform:scale(2.3);opacity:0}
+  100%{transform:scale(2.3);opacity:0}
+}
+
+/* ── Respect reduced-motion: kill all of the above ──────────────── */
+@media (prefers-reduced-motion:reduce){
+  .reveal,.reveal.is-visible{opacity:1!important;animation:none!important}
+  .page.active{animation:none!important}
+  .pillar-card.active .pillar-detail,
+  .strategy-pillar.open .strategy-pillar-body{animation:none!important}
+  .btn-primary:hover,.btn-ghost:hover,
+  .team-preview-card:hover,.param-card:hover,.news-card:hover{transform:none!important}
+  .hq-marker::before{animation:none!important;opacity:0!important}
+}

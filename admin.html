@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex,nofollow">
+<title>Basso Global Partners — News Admin</title>
+<link rel="icon" type="image/png" href="assets/logo-nav.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/styles.css">
+<style>
+  body{background:var(--off);min-height:100vh}
+  .admin-login{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px}
+  .login-card{background:#fff;border:1px solid var(--border);max-width:380px;width:100%;padding:40px 36px;box-shadow:0 18px 50px rgba(11,58,109,.10)}
+  .login-logo{height:38px;margin-bottom:24px}
+  .login-title{font-family:'Cormorant Garamond',serif;font-size:26px;color:var(--navy);margin-bottom:8px}
+  .login-note{font-size:12px;color:var(--muted);line-height:1.6;margin-bottom:24px;padding:10px 12px;background:rgba(201,168,76,.08);border-left:2px solid var(--gold)}
+  .admin-login input{width:100%;padding:12px 14px;border:1px solid var(--border);font-family:'DM Sans',sans-serif;font-size:14px;outline:none;margin-bottom:14px}
+  .admin-login input:focus{border-color:var(--gold)}
+  .btn{background:var(--gold);color:var(--navy);border:none;padding:13px 26px;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;transition:opacity .2s}
+  .btn:hover{opacity:.88}
+  .btn:disabled{opacity:.5;cursor:default}
+  .login-err{font-size:12px;color:#b3261e;margin-top:12px;min-height:16px}
+
+  .admin-bar{background:var(--navy);display:flex;align-items:center;justify-content:space-between;padding:0 32px;height:64px;position:sticky;top:0;z-index:5}
+  .admin-brand{display:flex;align-items:center;gap:14px}
+  .admin-brand img{height:30px;filter:brightness(0) invert(1)}
+  .admin-brand span{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--gold)}
+  .admin-bar .right{display:flex;align-items:center;gap:20px}
+  .admin-link{font-size:11px;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,.7);text-decoration:none}
+  .admin-link:hover{color:var(--gold)}
+  .admin-logout{background:transparent;color:rgba(255,255,255,.8);border:1px solid rgba(255,255,255,.25);padding:8px 16px;font-size:11px;letter-spacing:1px;text-transform:uppercase;cursor:pointer;font-family:'DM Sans',sans-serif}
+  .admin-logout:hover{border-color:var(--gold);color:var(--gold)}
+
+  .admin-main{max-width:920px;margin:0 auto;padding:36px 24px 80px;display:grid;gap:28px}
+  .admin-card{background:#fff;border:1px solid var(--border);padding:32px}
+  .admin-card h2{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:500;color:var(--navy);margin-bottom:22px}
+  .admin-card h2 span{font-size:13px;color:var(--muted);font-family:'DM Sans',sans-serif}
+  #newsForm label{display:block;font-size:11px;font-weight:500;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin-bottom:16px}
+  #newsForm input,#newsForm textarea{display:block;width:100%;margin-top:6px;padding:11px 13px;border:1px solid var(--border);font-family:'DM Sans',sans-serif;font-size:14px;color:var(--text);outline:none;text-transform:none;letter-spacing:normal;font-weight:400}
+  #newsForm input:focus,#newsForm textarea:focus{border-color:var(--gold)}
+  #newsForm textarea{resize:vertical}
+  #newsForm .row{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  .form-foot{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-top:6px}
+  #formMsg{font-size:13px;color:var(--muted)}
+  #formMsg.ok{color:#1a7f37}
+  #formMsg.err{color:#b3261e}
+
+  .news-row{display:flex;align-items:center;gap:16px;padding:14px 0;border-bottom:1px solid var(--border)}
+  .news-row:last-child{border-bottom:none}
+  .news-row .meta{flex:1;min-width:0}
+  .news-row .t{font-family:'Cormorant Garamond',serif;font-size:17px;color:var(--navy);line-height:1.2}
+  .news-row .d{font-size:12px;color:var(--muted);margin-top:2px}
+  .news-row .d a{color:var(--gold);text-decoration:none}
+  .row-del{background:transparent;border:1px solid var(--border);color:var(--muted);padding:7px 14px;font-size:11px;letter-spacing:.5px;text-transform:uppercase;cursor:pointer;font-family:'DM Sans',sans-serif;white-space:nowrap}
+  .row-del:hover{border-color:#b3261e;color:#b3261e}
+  .empty{font-size:14px;color:var(--muted);font-weight:300;padding:8px 0}
+
+  @media(max-width:640px){
+    .admin-bar{padding:0 18px}.admin-main{padding:24px 16px 60px}
+    .admin-card{padding:22px}#newsForm .row{grid-template-columns:1fr}
+  }
+</style>
+</head>
+<body>
+
+<!-- ── LOGIN (demo gate — replace with Supabase Auth) ───────────────── -->
+<div class="admin-login" id="login">
+  <div class="login-card">
+    <img src="assets/logo-nav.png" alt="Basso Global Partners" class="login-logo">
+    <div class="login-title">News Admin</div>
+    <div class="login-note"><strong>Demo-Login.</strong> Dieser Passwortschutz ist clientseitig und <strong>nicht sicher</strong> — er wird durch echte Authentifizierung (Supabase Auth) ersetzt, sobald das Backend steht.</div>
+    <input type="password" id="pw" placeholder="Password" autocomplete="off">
+    <button class="btn" id="loginBtn" style="width:100%">Sign in</button>
+    <div class="login-err" id="loginErr"></div>
+  </div>
+</div>
+
+<!-- ── DASHBOARD ────────────────────────────────────────────────────── -->
+<div id="dash" hidden>
+  <header class="admin-bar">
+    <div class="admin-brand"><img src="assets/logo-nav.png" alt="Basso"><span>News Admin</span></div>
+    <div class="right">
+      <a class="admin-link" href="index.html#news" target="_blank" rel="noopener">View site ↗</a>
+      <button class="admin-logout" id="logoutBtn">Log out</button>
+    </div>
+  </header>
+
+  <main class="admin-main">
+    <section class="admin-card">
+      <h2>Publish news</h2>
+      <form id="newsForm">
+        <label>Title<input id="f-title" maxlength="160" required></label>
+        <div class="row">
+          <label>Date<input id="f-date" type="date" required></label>
+          <label>Category <span style="text-transform:none;color:var(--muted)">(optional)</span><input id="f-category" maxlength="40" placeholder="Quarterly Update"></label>
+        </div>
+        <label>Excerpt<textarea id="f-excerpt" rows="3" maxlength="320" placeholder="Short summary shown on the card…"></textarea></label>
+        <label>PDF<input id="f-pdf" type="file" accept="application/pdf" required></label>
+        <div class="form-foot">
+          <span id="formMsg"></span>
+          <button class="btn" type="submit" id="publishBtn">Publish</button>
+        </div>
+      </form>
+    </section>
+
+    <section class="admin-card">
+      <h2>Published <span id="count"></span></h2>
+      <div id="adminList"><div class="empty">Loading…</div></div>
+    </section>
+  </main>
+</div>
+
+<script src="js/news-store.js"></script>
+<script src="js/admin.js"></script>
+</body>
+</html>

@@ -301,15 +301,18 @@ footer{background:var(--navy);border-top:1px solid rgba(201,168,76,0.2);padding:
 }
 
 
-/* ── TEAM PHOTO TILE ── */
-/* Full-bleed navy portrait tile (editorial). Photos are shot on navy, so the
-   tile and the photo background are the same color — no cutout, no fringe. */
+/* ── TEAM PHOTO AVATAR ── */
+/* Small round avatar. Photos are transparent PNG cutouts (person only), so the
+   card background shows through — no baked background, blends on hover/active. */
 .team-avatar-photo{
-  width:100%; aspect-ratio:1/1; overflow:hidden; flex-shrink:0;
-  background:var(--navy-mid);
+  width:120px; height:120px; border-radius:50%; overflow:hidden;
+  margin:38px auto 16px; flex-shrink:0;
+  border:2px solid rgba(201,168,76,0.4);
+  box-shadow:0 2px 10px rgba(11,58,109,0.18);
+  background:transparent;
 }
 .team-avatar-photo img{
-  width:100%; height:100%; object-fit:cover; object-position:center 22%; display:block;
+  width:100%; height:100%; object-fit:cover; object-position:center 12%; display:block;
 }
 
 /* ── INLINE BIO PANEL ── */

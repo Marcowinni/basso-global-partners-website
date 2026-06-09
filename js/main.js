@@ -42,18 +42,18 @@ const advisors = [
 
 // ── TEAM PHOTOS ──
 const teamPhotos = {
-  "HA": "assets/team-hani.png",
-  "GC": "assets/team-gregor.png",
-  "MN": "assets/team-martin.png",
-  "TP": "assets/team-tom.png",
-  "PA": "assets/team-patrick.png",
-  "DN": "assets/team-dwight.png",
-  "RT": "assets/team-roger.png",
-  "RS": "assets/team-russ.png",
-  "RD": "assets/team-romana.png",
-  "BO": "assets/team-ben.png",
-  "JF": "assets/team-foley.png",
-  "CP": "assets/team-petersen.png",
+  "HA": "assets/team-hani.jpg",
+  "GC": "assets/team-gregor.jpg",
+  "MN": "assets/team-martin.jpg",
+  "TP": "assets/team-tom.jpg",
+  "PA": "assets/team-patrick.jpg",
+  "DN": "assets/team-dwight.jpg",
+  "RT": "assets/team-roger.jpg",
+  "RS": "assets/team-russ.jpg",
+  "RD": "assets/team-romana.jpg",
+  "BO": "assets/team-ben.jpg",
+  "JF": "assets/team-foley.jpg",
+  "CP": "assets/team-petersen.jpg",
 };
 
 function buildTeamGrid(people, gridId, panelId) {

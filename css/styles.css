@@ -188,7 +188,7 @@ pointer-events:none;mix-blend-mode:screen}
 .team-card{background:var(--white);cursor:pointer;overflow:visible;transition:background 0.2s;position:relative;display:flex;flex-direction:column;align-items:center;}
 .team-card:hover{background:var(--gold-pale)}
 .team-card.active{background:var(--navy)}
-.team-avatar{width:100%;aspect-ratio:3/4;background:var(--navy-mid);display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-size:36px;color:rgba(201,168,76,0.4)}
+.team-avatar{width:100%;aspect-ratio:1/1;background:var(--navy-mid);display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-size:36px;color:rgba(201,168,76,0.4)}
 .team-info{padding:16px 20px 24px;width:100%;}
 .team-name{font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:500;color:var(--navy);margin-bottom:4px}
 .team-card.active .team-name{color:var(--white)}
@@ -301,22 +301,15 @@ footer{background:var(--navy);border-top:1px solid rgba(201,168,76,0.2);padding:
 }
 
 
-/* ── TEAM PHOTO AVATAR ── */
+/* ── TEAM PHOTO TILE ── */
+/* Full-bleed navy portrait tile (editorial). Photos are shot on navy, so the
+   tile and the photo background are the same color — no cutout, no fringe. */
 .team-avatar-photo{
-  width:120px; height:120px; border-radius:50%; overflow:hidden;
-  margin:38px auto 16px; border:2px solid rgba(201,168,76,0.4);
-  box-shadow:0 2px 10px rgba(11,58,109,0.18);
-  flex-shrink:0; background:var(--navy-mid);
-  position:relative;
+  width:100%; aspect-ratio:1/1; overflow:hidden; flex-shrink:0;
+  background:var(--navy-mid);
 }
 .team-avatar-photo img{
-  width:100%; height:100%; object-fit:cover; object-position:center 20%; display:block;
-}
-/* Dark vignette over the circle — blends light studio backgrounds into the navy palette */
-.team-avatar-photo::after{
-  content:''; position:absolute; inset:0; border-radius:50%;
-  background:radial-gradient(circle at center, transparent 48%, rgba(11,58,109,0.55) 100%);
-  pointer-events:none;
+  width:100%; height:100%; object-fit:cover; object-position:center 22%; display:block;
 }
 
 /* ── INLINE BIO PANEL ── */

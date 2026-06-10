@@ -519,3 +519,82 @@ footer{background:var(--navy);border-top:1px solid rgba(201,168,76,0.2);padding:
    the seamless 1px-divider grid leaves empty beige cells when < columns) ── */
 #newsGrid{background:transparent;gap:24px}
 #newsGrid .news-card{border:1px solid var(--border)}
+
+
+/* ── HERO OIL REVEAL ──
+   Painted version of the hero sits above the photo. Desktop: a soft round
+   "lens" follows the cursor and reveals the painting (mask position driven
+   by enhance.js via --lens-x/--lens-y). Touch: slow automatic crossfade.
+   The oil layer deliberately has NO kenburns animation — exact cursor
+   tracking matters more than pixel-parity with the photo, and the painting
+   is a reinterpretation anyway. */
+.hero-bg-oil{
+  animation:none;
+  opacity:0;
+  transition:opacity .9s ease;
+  /* saturate/brighten so the painting clearly glows through the dark hero overlay */
+  filter:saturate(1.3) brightness(1.18);
+  -webkit-mask-image:radial-gradient(circle 270px at var(--lens-x,50%) var(--lens-y,45%),#000 0%,#000 55%,transparent 100%);
+  mask-image:radial-gradient(circle 270px at var(--lens-x,50%) var(--lens-y,45%),#000 0%,#000 55%,transparent 100%);
+}
+.hero.lens-active .hero-bg-oil{opacity:1}
+@media (hover:none){
+  .hero-bg-oil{
+    -webkit-mask-image:none;mask-image:none;
+    animation:oilDrift 20s ease-in-out infinite;
+  }
+}
+@keyframes oilDrift{
+  0%,30%{opacity:0}
+  45%,75%{opacity:.9}
+  90%,100%{opacity:0}
+}
+
+/* ── TEAM OIL PORTRAITS ──
+   Hovering a team card crossfades the studio photo into the member's oil
+   portrait; the gold ring warms up with it. Applies to the team page grids
+   and the homepage preview cards. */
+.team-avatar-photo,.team-preview-photo{position:relative}
+.team-avatar-photo img.oil,
+.team-preview-photo img.oil{
+  position:absolute;inset:0;width:100%;height:100%;
+  object-fit:cover;object-position:center 12%;
+  opacity:0;transform:scale(1.10);
+  transition:opacity .5s ease,transform 1.1s cubic-bezier(.2,.6,.2,1);
+}
+@media (hover:hover){
+  .team-card:hover .team-avatar-photo img.oil,
+  .team-preview-card:hover .team-preview-photo img.oil{opacity:1;transform:scale(1)}
+  .team-card:hover .team-avatar-photo,
+  .team-preview-card:hover .team-preview-photo{
+    border-color:var(--gold);
+    box-shadow:0 6px 24px rgba(201,168,76,0.38);
+  }
+}
+
+/* Recenter off-center source crops: the photo fills the circle exactly
+   (no object-position slack), so a slight zoom creates room to shift the
+   face back to the middle. Oil portraits are centered and stay untouched. */
+.face-recenter-md img:not(.oil){transform:scale(1.32) translateX(8%);transform-origin:50% 28%}
+.face-recenter-sm img:not(.oil){transform:scale(1.20) translateX(5%);transform-origin:50% 28%}
+
+/* ── BIO PANEL — gilded oil portrait ──
+   Clicking a member opens the bio with the oil painting in a gold gallery
+   frame instead of the round photo. */
+.bio-portrait{
+  width:200px;padding:9px;
+  background:linear-gradient(145deg,#e3c87e 0%,#9c7c2e 55%,#d9bc6b 100%);
+  box-shadow:0 16px 40px rgba(0,0,0,0.38);
+  margin-bottom:22px;
+}
+.bio-portrait img{
+  display:block;width:100%;aspect-ratio:3/4;object-fit:cover;
+  border:1px solid rgba(11,25,41,0.5);
+}
+@media (max-width:640px){
+  .bio-portrait{width:150px;padding:7px}
+}
+@media (prefers-reduced-motion:reduce){
+  .hero-bg-oil{animation:none!important;opacity:0!important}
+  .team-avatar-photo img.oil,.team-preview-photo img.oil{transition:opacity .2s ease!important;transform:none!important}
+}

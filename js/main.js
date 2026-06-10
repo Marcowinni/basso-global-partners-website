@@ -42,19 +42,40 @@ const advisors = [
 
 // ── TEAM PHOTOS ──
 const teamPhotos = {
-  "HA": "assets/team-hani.jpg",
-  "GC": "assets/team-gregor.jpg",
-  "MN": "assets/team-martin.jpg",
-  "TP": "assets/team-tom.jpg",
-  "PA": "assets/team-patrick.jpg",
-  "DN": "assets/team-dwight.jpg",
-  "RT": "assets/team-roger.jpg",
-  "RS": "assets/team-russ.jpg",
-  "RD": "assets/team-romana.jpg",
-  "BO": "assets/team-ben.jpg",
-  "JF": "assets/team-foley.jpg",
-  "CP": "assets/team-petersen.jpg",
+  "HA": "assets/Hani.png",
+  "GC": "assets/Gregor.png",
+  "MN": "assets/Martin.png",
+  "TP": "assets/Tom.png",
+  "PA": "assets/Patrick.png",
+  "DN": "assets/Dwight.png",
+  "RT": "assets/Roger.png",
+  "RS": "assets/Russ.png",
+  "RD": "assets/Romana.png",
+  "BO": "assets/Ben.png",
+  "JF": "assets/Foley.png",
+  "CP": "assets/Claudia.png",
 };
+
+// Oil-painting portraits (web-optimized copies in assets/oil, sources in bilder-oil).
+// Shown on card hover (crossfade) and as the framed portrait in the bio panel.
+const oilPortraits = {
+  "HA": "assets/oil/Hani.jpg",
+  "GC": "assets/oil/Gregor.jpg",
+  "MN": "assets/oil/Martin.jpg",
+  "TP": "assets/oil/Tom.jpg",
+  "PA": "assets/oil/Patrick.jpg",
+  "DN": "assets/oil/Dwight.jpg",
+  "RT": "assets/oil/Roger.jpg",
+  "RS": "assets/oil/Russ.jpg",
+  "RD": "assets/oil/Romana.jpg",
+  "BO": "assets/oil/Ben.jpg",
+  "JF": "assets/oil/Foley.jpg",
+  "CP": "assets/oil/Claudia.jpg",
+};
+
+// Some source crops have the person off-center; these classes zoom slightly
+// and shift the photo so the face sits in the middle of the circle.
+const faceRecenter = { "HA": "face-recenter-md", "DN": "face-recenter-sm", "RT": "face-recenter-sm" };
 
 function buildTeamGrid(people, gridId, panelId) {
   const grid = document.getElementById(gridId);
@@ -63,8 +84,11 @@ function buildTeamGrid(people, gridId, panelId) {
     const card = document.createElement('div');
     card.className = 'team-card';
     const photoSrc = teamPhotos[p.initials];
+    const oilSrc = oilPortraits[p.initials];
+    const recenter = faceRecenter[p.initials] ? ' ' + faceRecenter[p.initials] : '';
+    const oilHtml = oilSrc ? `<img class="oil" src="${oilSrc}" alt="" loading="lazy">` : '';
     const avatarHtml = photoSrc
-      ? `<div class="team-avatar-photo"><img src="${photoSrc}" alt="${p.name}" loading="lazy"></div>`
+      ? `<div class="team-avatar-photo${recenter}"><img src="${photoSrc}" alt="${p.name}" loading="lazy">${oilHtml}</div>`
       : `<div class="team-avatar">${p.initials}</div>`;
     card.innerHTML = `${avatarHtml}<div class="team-info"><div class="team-name">${p.name}</div><div class="team-role">${p.role}</div></div>`;
     card.onclick = () => toggleTeamMember(card, p, grid, panel);
@@ -81,9 +105,12 @@ function toggleTeamMember(card, person, grid, panel) {
   card.classList.add('active');
 
   const photo = teamPhotos[person.initials];
-  const avatar = photo
-    ? `<div class="bio-photo"><img src="${photo}" alt="${person.name}"></div>`
-    : `<div class="bio-photo bio-photo-fallback">${person.initials}</div>`;
+  const oil = oilPortraits[person.initials];
+  const avatar = oil
+    ? `<div class="bio-portrait"><img src="${oil}" alt="${person.name} — oil portrait"></div>`
+    : photo
+      ? `<div class="bio-photo"><img src="${photo}" alt="${person.name}"></div>`
+      : `<div class="bio-photo bio-photo-fallback">${person.initials}</div>`;
   const badge = person.isAdvisor ? `<div class="advisor-badge">Advisory Board</div>` : '';
   const location = person.location ? `<div class="bio-location">${person.location}</div>` : '';
 

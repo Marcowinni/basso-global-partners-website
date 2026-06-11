@@ -549,12 +549,6 @@ footer{background:var(--navy);border-top:1px solid rgba(201,168,76,0.2);padding:
   }
 }
 
-/* Recenter off-center source crops: the photo fills the circle exactly
-   (no object-position slack), so a slight zoom creates room to shift the
-   face back to the middle. Oil portraits are centered and stay untouched. */
-.face-recenter-md img:not(.oil){transform:scale(1.32) translateX(8%);transform-origin:50% 28%}
-.face-recenter-sm img:not(.oil){transform:scale(1.20) translateX(5%);transform-origin:50% 28%}
-
 /* ── BIO PANEL — gilded oil portrait ──
    Clicking a member opens the bio with the oil painting in a gold gallery
    frame instead of the round photo. */

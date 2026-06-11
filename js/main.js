@@ -73,10 +73,6 @@ const oilPortraits = {
   "CP": "assets/oil/Claudia.jpg",
 };
 
-// Some source crops have the person off-center; these classes zoom slightly
-// and shift the photo so the face sits in the middle of the circle.
-const faceRecenter = { "HA": "face-recenter-md", "DN": "face-recenter-sm", "RT": "face-recenter-sm" };
-
 function buildTeamGrid(people, gridId, panelId) {
   const grid = document.getElementById(gridId);
   const panel = panelId ? document.getElementById(panelId) : null;
@@ -85,10 +81,9 @@ function buildTeamGrid(people, gridId, panelId) {
     card.className = 'team-card';
     const photoSrc = teamPhotos[p.initials];
     const oilSrc = oilPortraits[p.initials];
-    const recenter = faceRecenter[p.initials] ? ' ' + faceRecenter[p.initials] : '';
     const oilHtml = oilSrc ? `<img class="oil" src="${oilSrc}" alt="" loading="lazy">` : '';
     const avatarHtml = photoSrc
-      ? `<div class="team-avatar-photo${recenter}"><img src="${photoSrc}" alt="${p.name}" loading="lazy">${oilHtml}</div>`
+      ? `<div class="team-avatar-photo"><img src="${photoSrc}" alt="${p.name}" loading="lazy">${oilHtml}</div>`
       : `<div class="team-avatar">${p.initials}</div>`;
     card.innerHTML = `${avatarHtml}<div class="team-info"><div class="team-name">${p.name}</div><div class="team-role">${p.role}</div></div>`;
     card.onclick = () => toggleTeamMember(card, p, grid, panel);

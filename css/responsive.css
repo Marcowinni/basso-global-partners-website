@@ -53,7 +53,6 @@
   /* Nav → hamburger */
   #mainNav{padding:0 18px !important;justify-content:space-between !important}
   #mainNav > div:not(.nav-links){position:static !important;left:auto !important}
-  #mainNav .nav-login-btn{display:none}
   .nav-toggle{display:flex}
 
   #mainNav .nav-links{

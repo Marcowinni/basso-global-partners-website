@@ -151,16 +151,7 @@
     });
   }
 
-  /* ── 5. Neutralize the placeholder "Investor Login" jump ──────────
-     No portal yet; stop the href="#" from scrolling to the top. */
-  function setupLoginPlaceholder() {
-    var login = document.querySelector('.nav-login-btn');
-    if (login && login.getAttribute('href') === '#') {
-      login.addEventListener('click', function (e) { e.preventDefault(); });
-    }
-  }
-
-  /* ── 6. Hero oil lens — a soft round reveal of the painted hero that
+  /* ── 5. Hero oil lens — a soft round reveal of the painted hero that
      follows the cursor (mask position via CSS vars, lerped for smoothness).
      Pointer-driven, so it needs no reduced-motion guard; touch devices get
      the CSS-only crossfade instead (see styles.css @media hover:none). ── */
@@ -195,7 +186,7 @@
     hero.addEventListener('mouseleave', function () { hero.classList.remove('lens-active'); });
   }
 
-  /* ── 7. Mobile nav — inject a hamburger toggle (no markup change) ── */
+  /* ── 6. Mobile nav — inject a hamburger toggle (no markup change) ── */
   function setupMobileNav() {
     var nav = document.getElementById('mainNav');
     if (!nav || nav.querySelector('.nav-toggle')) return;
@@ -226,5 +217,4 @@
   setupCountUp();
   setupRouting();
   setupContactForm();
-  setupLoginPlaceholder();
 })();

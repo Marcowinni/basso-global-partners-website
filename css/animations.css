@@ -47,11 +47,7 @@
 }
 
 /* ── HQ map marker: slow on-brand pulse (Zurich) ────────────────── */
-.hq-marker::before{
-  content:'';position:absolute;inset:-4px;border-radius:50%;
-  border:2px solid rgba(201,168,76,.55);pointer-events:none;
-  animation:hqPulse 2.8s ease-out infinite;
-}
+
 @keyframes hqPulse{
   0%{transform:scale(1);opacity:.7}
   70%{transform:scale(2.3);opacity:0}

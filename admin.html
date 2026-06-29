@@ -65,29 +65,17 @@
 </head>
 <body>
 
-<!-- ── LOGIN (demo gate — replace with Supabase Auth) ───────────────── -->
-<div class="admin-login" id="login">
-  <div class="login-card">
-    <img src="assets/logo-nav.png" alt="Basso Global Partners" class="login-logo">
-    <div class="login-title">News Admin</div>
-    <div class="login-note"><strong>Demo-Login.</strong> Dieser Passwortschutz ist clientseitig und <strong>nicht sicher</strong> — er wird durch echte Authentifizierung (Supabase Auth) ersetzt, sobald das Backend steht.</div>
-    <input type="password" id="pw" placeholder="Password" autocomplete="off">
-    <button class="btn" id="loginBtn" style="width:100%">Sign in</button>
-    <div class="login-err" id="loginErr"></div>
-  </div>
-</div>
-
 <!-- ── DASHBOARD ────────────────────────────────────────────────────── -->
-<div id="dash" hidden>
+<div id="dash">
   <header class="admin-bar">
     <div class="admin-brand"><img src="assets/logo-nav.png" alt="Basso"><span>News Admin</span></div>
     <div class="right">
       <a class="admin-link" href="index.html#news" target="_blank" rel="noopener">View site ↗</a>
-      <button class="admin-logout" id="logoutBtn">Log out</button>
     </div>
   </header>
 
   <main class="admin-main">
+    <div class="login-note">Demo — frontend only. Real access control (Supabase Auth) is added before launch.</div>
     <section class="admin-card">
       <h2>Publish news</h2>
       <form id="newsForm">

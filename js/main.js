@@ -40,22 +40,6 @@ const advisors = [
    edu:'Banking &amp; Finance, University of Applied Sciences Bern'},
 ];
 
-// ── TEAM PHOTOS ──
-const teamPhotos = {
-  "HA": "assets/Hani.png",
-  "GC": "assets/Gregor.png",
-  "MN": "assets/Martin.png",
-  "TP": "assets/Tom.png",
-  "PA": "assets/Patrick.png",
-  "DN": "assets/Dwight.png",
-  "RT": "assets/Roger.png",
-  "RS": "assets/Russ.png",
-  "RD": "assets/Romana.png",
-  "BO": "assets/Ben.png",
-  "JF": "assets/Foley.png",
-  "CP": "assets/Claudia.png",
-};
-
 // Oil-painting portraits (web-optimized copies in assets/oil, sources in bilder-oil).
 // Shown on card hover (crossfade) and as the framed portrait in the bio panel.
 const oilPortraits = {
@@ -79,12 +63,15 @@ function buildTeamGrid(people, gridId, panelId) {
   people.forEach(p => {
     const card = document.createElement('div');
     card.className = 'team-card';
-    const portraitSrc = oilPortraits[p.initials] || teamPhotos[p.initials];
+    const portraitSrc = oilPortraits[p.initials];
     const avatarHtml = portraitSrc
-      ? `<div class="team-avatar-photo"><img src="${portraitSrc}" alt="${p.name}" loading="lazy"></div>`
+      ? `<div class="team-avatar-photo"><img src="${portraitSrc}" alt="${p.name}" loading="lazy" decoding="async"></div>`
       : `<div class="team-avatar">${p.initials}</div>`;
     card.innerHTML = `${avatarHtml}<div class="team-info"><div class="team-name">${p.name}</div><div class="team-role">${p.role}</div></div>`;
     card.onclick = () => toggleTeamMember(card, p, grid, panel);
+    card.setAttribute('role', 'button');
+    card.setAttribute('tabindex', '0');
+    card.setAttribute('aria-label', p.name);
     grid.appendChild(card);
   });
 }
@@ -97,9 +84,9 @@ function toggleTeamMember(card, person, grid, panel) {
   if (wasActive) return;
   card.classList.add('active');
 
-  const portrait = oilPortraits[person.initials] || teamPhotos[person.initials];
+  const portrait = oilPortraits[person.initials];
   const avatar = portrait
-    ? `<div class="bio-photo"><img src="${portrait}" alt="${person.name}"></div>`
+    ? `<div class="bio-photo"><img src="${portrait}" alt="${person.name}" loading="lazy" decoding="async"></div>`
     : `<div class="bio-photo bio-photo-fallback">${person.initials}</div>`;
   const badge = person.isAdvisor ? `<div class="advisor-badge">Advisory Board</div>` : '';
   const location = person.location ? `<div class="bio-location">${person.location}</div>` : '';
@@ -133,28 +120,6 @@ function toggleTeamMember(card, person, grid, panel) {
 
 buildTeamGrid(partners, 'teamGrid', null);
 buildTeamGrid(advisors, 'advisorGrid', null);
-
-// ── MAP TOOLTIP ──
-function showTip(e, city, entity, addr) {
-  const tip = document.getElementById('mapTooltip');
-  const container = document.getElementById('mapContainer');
-  const rect = container.getBoundingClientRect();
-  const svgEl = e.currentTarget;
-  const svgRect = svgEl.getBoundingClientRect();
-  let x = svgRect.left - rect.left + 20;
-  let y = svgRect.top - rect.top - 80;
-  if (x + 240 > rect.width) x = x - 260;
-  if (y < 0) y = svgRect.top - rect.top + 20;
-  document.getElementById('tipCity').textContent = city;
-  document.getElementById('tipEntity').textContent = entity;
-  document.getElementById('tipAddr').textContent = addr;
-  tip.style.left = x + 'px';
-  tip.style.top = y + 'px';
-  tip.classList.add('show');
-}
-function hideTip() {
-  document.getElementById('mapTooltip').classList.remove('show');
-}
 
 // ── NAV ──
 // Newsletter signup — no backend, so compose a mailto to investor relations

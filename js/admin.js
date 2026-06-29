@@ -1,48 +1,24 @@
 /* Basso Global Partners — News Admin (frontend-only demo).
  *
- * ⚠️ SECURITY: the login below is a CLIENT-SIDE gate only — it is NOT real
- * authentication and provides NO protection (anyone can read this file / the
- * localStorage data). It exists so the dashboard is usable before the backend
- * is built. Replace with Supabase Auth (server-verified session) before this
- * goes anywhere near production. Do not store anything sensitive here.
+ * ⚠️ SECURITY: the client-side password gate has been REMOVED — a password
+ * shipped in this file is readable by anyone and provides NO protection. This
+ * admin only edits the visitor's OWN localStorage (no shared data), so the gate
+ * was security theatre. Real protection must come from server-verified Supabase
+ * Auth before this goes anywhere near production. Do not store anything
+ * sensitive here.
  */
 (function () {
   'use strict';
 
-  // Demo password — placeholder only. Real auth replaces this entirely.
-  var DEMO_PASSWORD = 'basso2026';
-  var SESSION_KEY = 'basso_admin_ok';
   var MAX_PDF_BYTES = 2 * 1024 * 1024; // ~2MB demo cap (localStorage). Supabase Storage removes this.
 
   var $ = function (id) { return document.getElementById(id); };
 
-  /* ── Auth gate (demo) ─────────────────────────────────────────────── */
-  function isLoggedIn() { return sessionStorage.getItem(SESSION_KEY) === '1'; }
-
   function showDash(on) {
-    $('login').style.display = on ? 'none' : '';
-    $('dash').hidden = !on;
+    var dash = $('dash');
+    if (dash) dash.hidden = !on;
     if (on) renderList();
   }
-
-  function tryLogin() {
-    var pw = $('pw').value;
-    if (pw === DEMO_PASSWORD) {
-      sessionStorage.setItem(SESSION_KEY, '1');
-      $('loginErr').textContent = '';
-      $('pw').value = '';
-      showDash(true);
-    } else {
-      $('loginErr').textContent = 'Wrong password.';
-    }
-  }
-
-  $('loginBtn').addEventListener('click', tryLogin);
-  $('pw').addEventListener('keydown', function (e) { if (e.key === 'Enter') tryLogin(); });
-  $('logoutBtn').addEventListener('click', function () {
-    sessionStorage.removeItem(SESSION_KEY);
-    showDash(false);
-  });
 
   /* ── Publish ──────────────────────────────────────────────────────── */
   function msg(text, kind) {
@@ -127,8 +103,8 @@
   }
 
   // Live: re-render when the store changes (this tab or another tab)
-  NewsStore.subscribe(function () { if (isLoggedIn()) renderList(); });
+  NewsStore.subscribe(function () { renderList(); });
 
   /* ── Init ─────────────────────────────────────────────────────────── */
-  showDash(isLoggedIn());
+  showDash(true);
 })();

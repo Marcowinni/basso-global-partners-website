@@ -176,9 +176,24 @@
     });
   }
 
+  /* ── 6. Keyboard activation for role="button" elements ────────────
+     Interactive divs (pillar cards, strategy rows, team cards) carry
+     role="button" + tabindex="0" but no native key handling. One
+     delegated listener makes Enter/Space activate them; Space also
+     prevents the default page scroll. Nav anchors work natively. */
+  function setupKeyboardActivation() {
+    document.addEventListener('keydown', function (e) {
+      if (e.key !== 'Enter' && e.key !== ' ') return;
+      if (!e.target.matches || !e.target.matches('[role="button"]')) return;
+      if (e.key === ' ') e.preventDefault();
+      e.target.click();
+    });
+  }
+
   setupMobileNav();
   setupReveal();
   setupCountUp();
   setupRouting();
   setupContactForm();
+  setupKeyboardActivation();
 })();

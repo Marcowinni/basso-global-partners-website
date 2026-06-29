@@ -29,12 +29,12 @@ const advisors = [
   {initials:'RS',name:'Russ Steenberg',role:'Senior Advisor',isAdvisor:true,
    bio:`<p>Russ was Managing Director and Chairman of BlackRock Private Equity Partners (PEP) within BlackRock Equity Private Markets (EPM), and previously Global Co-Head of BlackRock Private Equity Partners from 1999–2022. He founded PEP in 1999 when he joined Merrill Lynch Investment Managers, which merged with BlackRock in 2006.</p><p>Prior to founding PEP, Russ was Co-Founder and Managing Director of Fenway Partners and Co-Head of AT&T Pension Fund's PE portfolio. He currently serves on the boards and ICs of several private equity funds and foundations.</p>`,
    edu:'BA, St. Lawrence University; MBA, Amos Tuck School, Dartmouth; MPA, American University'},
-  {initials:'BO',name:"Ben O'Halloran",role:'Senior Advisor',isAdvisor:true,
-   bio:`<p>Ben has over 30 years of experience in M&amp;A, finance, and investment transactions across various industries. He handled M&amp;A in Europe for GE Capital and the GE parent company for 12 years, was a partner at Jones Day, and served as Chief Legal Officer at Verisure.</p>`,
-   edu:'Harvard University; University of Oxford; INSEAD'},
   {initials:'CP',name:'Dr. Claudia Petersen',role:'Senior Advisor',isAdvisor:true,
    bio:`<p>Claudia has over 30 years of experience in private markets. In her previous position, Claudia was the Head of the Julius Baer Private Markets department leading a team of 16 professionals (including investment, structuring, and lifecycle teams) and responsible for CHF 6 billion of client assets across private equity, private debt, and private real estate.</p><p>Before joining Julius Bär, she was Head of Business Development Private Markets and Senior Private Equity Portfolio Manager at Baloise Asset Management. Claudia's prior experience includes launching the Swisscanto Growth Fund for Zürcher Kantonalbank, being a member of the Private Equity Investment team at Partners Group for 15 years, a Managing Director at LGT Private Equity Advisors, and a business consultant at Oliver Wyman.</p>`,
    edu:'Ph.D. in Business Administration, University of St. Gallen; MBA, HEC Paris'},
+  {initials:'BO',name:"Ben O'Halloran",role:'Senior Advisor',isAdvisor:true,
+   bio:`<p>Ben has over 30 years of experience in M&amp;A, finance, and investment transactions across various industries. He handled M&amp;A in Europe for GE Capital and the GE parent company for 12 years, was a partner at Jones Day, and served as Chief Legal Officer at Verisure.</p>`,
+   edu:'Harvard University; University of Oxford; INSEAD'},
   {initials:'RD',name:'Romana Doser',role:'ESG Advisor',isAdvisor:true,
    bio:`<p>Romana has in-depth knowledge of the European impact investor landscape and a strong understanding of the respective product offerings and trends. She spent 13 years with responsAbility's Relationship Management Team, heading the Institutional Team Switzerland. responsAbility is known as the pioneer for social and environmental impact investments. She started her professional career at UBS Wealth Management.</p><p>Outside of her role at Basso, Romana is a Senior Relationship Manager for impact investments at Invethos, an independent wealth management firm in Switzerland focused on transparent and sustainable investment solutions.</p>`,
    edu:'Banking &amp; Finance, University of Applied Sciences Bern'},
@@ -79,11 +79,9 @@ function buildTeamGrid(people, gridId, panelId) {
   people.forEach(p => {
     const card = document.createElement('div');
     card.className = 'team-card';
-    const photoSrc = teamPhotos[p.initials];
-    const oilSrc = oilPortraits[p.initials];
-    const oilHtml = oilSrc ? `<img class="oil" src="${oilSrc}" alt="" loading="lazy">` : '';
-    const avatarHtml = photoSrc
-      ? `<div class="team-avatar-photo"><img src="${photoSrc}" alt="${p.name}" loading="lazy">${oilHtml}</div>`
+    const portraitSrc = oilPortraits[p.initials] || teamPhotos[p.initials];
+    const avatarHtml = portraitSrc
+      ? `<div class="team-avatar-photo"><img src="${portraitSrc}" alt="${p.name}" loading="lazy"></div>`
       : `<div class="team-avatar">${p.initials}</div>`;
     card.innerHTML = `${avatarHtml}<div class="team-info"><div class="team-name">${p.name}</div><div class="team-role">${p.role}</div></div>`;
     card.onclick = () => toggleTeamMember(card, p, grid, panel);
@@ -99,13 +97,10 @@ function toggleTeamMember(card, person, grid, panel) {
   if (wasActive) return;
   card.classList.add('active');
 
-  const photo = teamPhotos[person.initials];
-  const oil = oilPortraits[person.initials];
-  const avatar = oil
-    ? `<div class="bio-portrait"><img src="${oil}" alt="${person.name} — oil portrait"></div>`
-    : photo
-      ? `<div class="bio-photo"><img src="${photo}" alt="${person.name}"></div>`
-      : `<div class="bio-photo bio-photo-fallback">${person.initials}</div>`;
+  const portrait = oilPortraits[person.initials] || teamPhotos[person.initials];
+  const avatar = portrait
+    ? `<div class="bio-photo"><img src="${portrait}" alt="${person.name}"></div>`
+    : `<div class="bio-photo bio-photo-fallback">${person.initials}</div>`;
   const badge = person.isAdvisor ? `<div class="advisor-badge">Advisory Board</div>` : '';
   const location = person.location ? `<div class="bio-location">${person.location}</div>` : '';
 
@@ -162,6 +157,9 @@ function hideTip() {
 }
 
 // ── NAV ──
+// Newsletter signup — no backend, so compose a mailto to investor relations
+// (same approach as the contact form). The subscriber's address goes in the
+// body so it reaches the internal IR inbox.
 function handleNewsletterSignup(btn) {
   const input = btn.previousElementSibling;
   const email = input ? input.value.trim() : '';
@@ -170,11 +168,13 @@ function handleNewsletterSignup(btn) {
     input.placeholder = 'Please enter a valid email address';
     return;
   }
-  btn.textContent = 'Subscribed ✓';
-  btn.style.background = 'rgba(201,168,76,0.5)';
-  btn.disabled = true;
+  const subject = 'Newsletter subscription request';
+  const body = 'Please add the following address to the Basso quarterly newsletter:\n\n' + email + '\n';
+  window.location.href = 'mailto:ir@bassoglobalpartners.com' +
+    '?subject=' + encodeURIComponent(subject) +
+    '&body=' + encodeURIComponent(body);
+  btn.textContent = 'Opening your mail app…';
   input.value = '';
-  input.placeholder = 'Thank you for subscribing!';
 }
 
 function showPage(name) {
@@ -186,8 +186,10 @@ function showPage(name) {
   if (mapEl) mapEl.style.display = (name === 'home') ? '' : 'none';
   const navEl = document.getElementById('nav-' + name);
   if (navEl) navEl.classList.add('active');
+  // Footer sits before the standalone legal pages in the DOM, so it would
+  // render ABOVE their content — hide it there.
   const footer = document.getElementById('siteFooter');
-  if (footer) footer.style.display = '';
+  if (footer) footer.style.display = (name === 'data-protection' || name === 'terms') ? 'none' : '';
   window.scrollTo({top:0, behavior:'smooth'});
 }
 window.addEventListener('scroll', () => {

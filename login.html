@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex,nofollow">
+<title>Investor Login — Basso Global Partners</title>
+<link rel="icon" type="image/png" href="assets/logo-nav.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/styles.css">
+<style>
+  /* Standalone investor-portal login. Placeholder only — no real auth yet. */
+  body{margin:0;background:var(--white)}
+  .login-split{display:grid;grid-template-columns:1fr 1fr;min-height:100vh}
+
+  /* ── Left: oil painting + welcome copy ── */
+  .login-visual{position:relative;overflow:hidden;background:var(--navy)}
+  .login-visual-img{position:absolute;inset:0;background-image:url('assets/hero-oil.jpg');
+    background-size:cover;background-position:center 35%}
+  .login-visual-overlay{position:absolute;inset:0;
+    background:linear-gradient(180deg,rgba(11,25,41,0.25) 0%,rgba(11,25,41,0.45) 55%,rgba(11,25,41,0.82) 100%)}
+  .login-welcome{position:absolute;left:56px;bottom:56px;right:56px;z-index:2}
+  .login-welcome h2{font-family:'Cormorant Garamond',serif;font-size:34px;font-weight:400;
+    color:#fff;line-height:1.2;margin:0 0 14px}
+  .login-welcome p{font-size:14px;line-height:1.8;font-weight:300;
+    color:rgba(255,255,255,0.72);max-width:420px;margin:0}
+
+  /* ── Right: login form ── */
+  .login-form-side{display:flex;flex-direction:column;align-items:center;justify-content:center;
+    padding:48px 40px;position:relative}
+  .login-card{width:100%;max-width:340px;text-align:center}
+  .login-logo{height:46px;margin:0 auto 8px;display:block}
+  .login-eyebrow{font-size:11px;font-weight:500;letter-spacing:3px;text-transform:uppercase;
+    color:var(--gold);margin-bottom:48px}
+  .login-field{text-align:left;margin-bottom:18px}
+  .login-field label{display:block;font-size:11px;font-weight:500;letter-spacing:1.5px;
+    text-transform:uppercase;color:var(--muted);margin-bottom:8px}
+  .login-field input{width:100%;padding:14px 16px;border:1px solid var(--border);
+    background:var(--white);font-family:'DM Sans',sans-serif;font-size:14px;color:var(--text);
+    outline:none;transition:border-color 0.2s;border-radius:0}
+  .login-field input:focus{border-color:var(--gold)}
+  .login-submit{width:100%;background:var(--navy);color:#fff;border:none;padding:15px 32px;
+    font-family:'DM Sans',sans-serif;font-size:12px;font-weight:500;letter-spacing:2px;
+    text-transform:uppercase;cursor:pointer;transition:background 0.2s;margin-top:6px}
+  .login-submit:hover{background:var(--navy-mid)}
+  .login-note{font-size:12px;color:var(--muted);font-weight:300;margin-top:20px;min-height:16px}
+  .login-back{position:absolute;top:28px;left:32px;font-size:11px;font-weight:500;letter-spacing:1.5px;
+    text-transform:uppercase;color:var(--muted);text-decoration:none;transition:color 0.2s}
+  .login-back:hover{color:var(--gold)}
+  .login-foot{margin-top:44px;display:flex;gap:20px;justify-content:center;flex-wrap:wrap;
+    font-size:11px;color:var(--muted)}
+  .login-foot a{color:var(--muted);text-decoration:none}
+  .login-foot a:hover{color:var(--gold)}
+
+  @media (max-width:860px){
+    .login-split{grid-template-columns:1fr}
+    .login-visual{display:none}
+  }
+</style>
+</head>
+<body>
+<div class="login-split">
+
+  <!-- Oil-painting panel -->
+  <div class="login-visual">
+    <div class="login-visual-img"></div>
+    <div class="login-visual-overlay"></div>
+    <div class="login-welcome">
+      <h2>Welcome to the Basso Investor Portal</h2>
+      <p>Secure access to your investment information, reporting, and documents. For qualified and professional investors only.</p>
+    </div>
+  </div>
+
+  <!-- Login form -->
+  <div class="login-form-side">
+    <a class="login-back" href="index.html">← Back to site</a>
+    <div class="login-card">
+      <img src="assets/logo-nav.png" alt="Basso Global Partners" class="login-logo">
+      <div class="login-eyebrow">Investor Portal</div>
+
+      <form id="loginForm" novalidate>
+        <div class="login-field">
+          <label for="login-email">Email</label>
+          <input type="email" id="login-email" placeholder="you@example.com" autocomplete="username">
+        </div>
+        <div class="login-field">
+          <label for="login-pw">Password</label>
+          <input type="password" id="login-pw" placeholder="••••••••" autocomplete="current-password">
+        </div>
+        <button type="submit" class="login-submit">Sign In</button>
+        <div class="login-note" id="loginNote"></div>
+      </form>
+
+      <div class="login-foot">
+        <a href="mailto:ir@bassoglobalpartners.com">Contact IR</a>
+        <a href="index.html#data-protection">Privacy</a>
+        <a href="index.html#terms">Terms</a>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  // Placeholder — the portal backend does not exist yet. Show a friendly note
+  // instead of attempting a (non-existent) login.
+  document.getElementById('loginForm').addEventListener('submit', function (e) {
+    e.preventDefault();
+    document.getElementById('loginNote').textContent =
+      'The investor portal is launching soon. Please contact Investor Relations for access.';
+  });
+</script>
+</body>
+</html>

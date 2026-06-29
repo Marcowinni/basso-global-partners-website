@@ -151,42 +151,7 @@
     });
   }
 
-  /* ── 5. Hero oil lens — a soft round reveal of the painted hero that
-     follows the cursor (mask position via CSS vars, lerped for smoothness).
-     Pointer-driven, so it needs no reduced-motion guard; touch devices get
-     the CSS-only crossfade instead (see styles.css @media hover:none). ── */
-  function setupHeroOilLens() {
-    var hero = document.querySelector('#page-home .hero');
-    var oil = hero && hero.querySelector('.hero-bg-oil');
-    if (!oil) return;
-    if (!window.matchMedia('(hover:hover) and (pointer:fine)').matches) return;
-
-    var tx = 0, ty = 0, cx = null, cy = null, raf = null;
-
-    function frame() {
-      cx += (tx - cx) * 0.16;
-      cy += (ty - cy) * 0.16;
-      oil.style.setProperty('--lens-x', cx.toFixed(1) + 'px');
-      oil.style.setProperty('--lens-y', cy.toFixed(1) + 'px');
-      if (Math.abs(tx - cx) + Math.abs(ty - cy) > 0.5) {
-        raf = requestAnimationFrame(frame);
-      } else {
-        raf = null;
-      }
-    }
-
-    hero.addEventListener('mousemove', function (e) {
-      var r = oil.getBoundingClientRect();
-      tx = e.clientX - r.left;
-      ty = e.clientY - r.top;
-      if (cx === null) { cx = tx; cy = ty; }
-      if (!raf) raf = requestAnimationFrame(frame);
-    });
-    hero.addEventListener('mouseenter', function () { hero.classList.add('lens-active'); });
-    hero.addEventListener('mouseleave', function () { hero.classList.remove('lens-active'); });
-  }
-
-  /* ── 6. Mobile nav — inject a hamburger toggle (no markup change) ── */
+  /* ── 5. Mobile nav — inject a hamburger toggle (no markup change) ── */
   function setupMobileNav() {
     var nav = document.getElementById('mainNav');
     if (!nav || nav.querySelector('.nav-toggle')) return;
@@ -212,7 +177,6 @@
   }
 
   setupMobileNav();
-  setupHeroOilLens();
   setupReveal();
   setupCountUp();
   setupRouting();

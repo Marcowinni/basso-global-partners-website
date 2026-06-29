@@ -41,11 +41,8 @@
   .team-grid{grid-template-columns:repeat(2,1fr) !important}
   #advisorGrid{grid-template-columns:repeat(2,1fr) !important}
 
-  /* Locations: stack HQ above the partner offices */
-  .locations-content-row{grid-template-columns:1fr !important}
-  .partner-grid{grid-template-columns:repeat(2,1fr) !important}
-  .hq-header{padding-left:40px !important}
-  .location-card.hq .hq-inner{padding-left:0 !important}
+  /* Locations: uniform office grid → 3 columns on tablet */
+  .locations-grid{grid-template-columns:repeat(3,1fr)}
 }
 
 /* ───────────── Phones ───────────── */
@@ -91,8 +88,7 @@
   .params-grid{grid-template-columns:1fr}
   .news-grid{grid-template-columns:1fr}
   .team-grid,#advisorGrid{grid-template-columns:1fr !important}
-  .partner-grid{grid-template-columns:1fr !important}
-  .locations-header-row{grid-template-columns:1fr}
+  .locations-grid{grid-template-columns:1fr}
 
   .snapshot-cta{flex-direction:column;gap:16px;align-items:flex-start}
   .divider-cta{flex-direction:column;gap:16px;align-items:flex-start;padding:28px 22px}

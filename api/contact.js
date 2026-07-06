@@ -72,7 +72,6 @@ module.exports = async function handler(req, res) {
     });
     return res.status(200).json({ ok: true });
   } catch (err) {
-    // TEMP DEBUG: surface the SMTP error + which login the function uses. Revert after.
-    return res.status(502).json({ ok: false, error: 'Could not send right now.', detail: String((err && err.message) || err), user: user, port: port, passLen: (pass || '').length });
+    return res.status(502).json({ ok: false, error: 'Could not send right now.' });
   }
 };

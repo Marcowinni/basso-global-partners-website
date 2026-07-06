@@ -101,53 +101,59 @@
     }
   }
 
-  /* ── 4. Contact form → opens the visitor's mail client ────────────
-     No backend exists, so we compose a mailto: with the entered data.
-     Honest, zero-dependency, and actually sends. */
+  /* ── 4. Contact form → POST to the serverless endpoint (/api/contact),
+     which sends the email server-side. Requires a consent checkbox and
+     carries a honeypot field for spam. Falls back to a clear error. */
   function setupContactForm() {
-    var page = document.getElementById('page-contact');
-    if (!page) return;
-
-    var btn = Array.prototype.slice
-      .call(page.querySelectorAll('.btn-primary'))
-      .filter(function (b) { return /send message/i.test(b.textContent); })[0];
+    var btn = document.getElementById('contact-submit');
     if (!btn) return;
 
-    var val = function (sel) {
-      var el = page.querySelector(sel);
-      return el ? el.value.trim() : '';
-    };
+    var v = function (id) { var el = document.getElementById(id); return el ? el.value.trim() : ''; };
+    var label = btn.textContent;
     var flash = function (msg) {
-      var old = btn.textContent;
       btn.textContent = msg;
-      setTimeout(function () { btn.textContent = old; }, 2600);
+      setTimeout(function () { btn.textContent = label; }, 3200);
     };
 
     btn.addEventListener('click', function () {
-      var first = val('input[placeholder="Jane"]');
-      var last  = val('input[placeholder="Smith"]');
-      var org   = val('input[placeholder="Your firm or institution"]');
-      var email = val('input[type="email"]');
-      var topic = val('select') || 'General Inquiry';
-      var msg   = val('textarea');
+      var consent = document.getElementById('contact-consent');
+      var email = v('contact-email');
+      var message = v('contact-message');
 
-      if (!email || email.indexOf('@') < 0 || !msg) {
-        flash('Add your email + message');
-        return;
-      }
+      if (!consent || !consent.checked) { flash('Please accept the privacy note'); return; }
+      if (!email || email.indexOf('@') < 0 || !message) { flash('Add your email + message'); return; }
 
-      var subject = 'Website inquiry — ' + topic;
-      var body =
-        'Name: ' + (first + ' ' + last).trim() + '\n' +
-        'Organization: ' + org + '\n' +
-        'Email: ' + email + '\n' +
-        'Inquiry type: ' + topic + '\n\n' +
-        msg + '\n';
+      var payload = {
+        firstName: v('contact-first'),
+        lastName: v('contact-last'),
+        organization: v('contact-org'),
+        email: email,
+        inquiryType: v('contact-inquiry'),
+        message: message,
+        company_url: v('contact-hp') // honeypot — real users leave it empty
+      };
 
-      window.location.href = 'mailto:ir@bassoglobalpartners.com' +
-        '?subject=' + encodeURIComponent(subject) +
-        '&body=' + encodeURIComponent(body);
-      flash('Opening your mail app…');
+      btn.disabled = true;
+      flash('Sending…');
+
+      fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      })
+        .then(function (r) { return r.json().catch(function () { return { ok: false }; }); })
+        .then(function (data) {
+          if (data && data.ok) {
+            flash('Thank you — message sent ✓');
+            ['contact-first', 'contact-last', 'contact-org', 'contact-email', 'contact-message']
+              .forEach(function (id) { var el = document.getElementById(id); if (el) el.value = ''; });
+            if (consent) consent.checked = false;
+          } else {
+            flash('Could not send — please try again');
+          }
+        })
+        .catch(function () { flash('Could not send — please try again'); })
+        .then(function () { btn.disabled = false; });
     });
   }
 

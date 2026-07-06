@@ -7,6 +7,9 @@ bilder/
 bilder-oil/
 assets/hero-oil.png
 
+# ── Node (serverless function deps) ──
+node_modules/
+
 # ── Local preview / test / tooling artifacts ──
 .playwright-mcp/
 _sample.pdf

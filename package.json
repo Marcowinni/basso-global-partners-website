@@ -1,0 +1,9 @@
+{
+  "name": "basso-global-partners-website",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Static site (Vercel) with a serverless contact-form endpoint.",
+  "dependencies": {
+    "nodemailer": "^6.9.14"
+  }
+}

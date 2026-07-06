@@ -72,7 +72,7 @@ module.exports = async function handler(req, res) {
     });
     return res.status(200).json({ ok: true });
   } catch (err) {
-    // Don't leak SMTP internals to the client.
-    return res.status(502).json({ ok: false, error: 'Could not send right now.' });
+    // TEMP DEBUG: surface the SMTP error to diagnose the Brevo wiring. Revert after.
+    return res.status(502).json({ ok: false, error: 'Could not send right now.', detail: String((err && err.message) || err) });
   }
 };

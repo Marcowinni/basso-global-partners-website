@@ -1,28 +1,28 @@
 // ── TEAM DATA ──
 const partners = [
-  {initials:'HA',name:'Hani Abuali',role:'Partner & CEO',location:'Zürich',
+  {initials:'HA',name:'Hani Abuali',role:'Partner',location:'Zurich',
    bio:`<p>Hani is the former Chief Executive Officer of Petiole Asset Management AG, an independent multi-family office. He brings over 30 years of experience in investment and finance.</p><p>He was previously Managing Director at Mount Kellett Capital and Portfolio Manager at Polygon Investments. At Morgan Stanley Asia he ran Proprietary Trading and co-headed Telecom Research, achieving a #1 ranking for five years (2000–2005) in Institutional Investor and Greenwich.</p><p>Hani started his career in finance in New York as an Oil & Gas research analyst with Donaldson, Lufkin & Jenrette.</p>`,
-   edu:'Economics, The Wharton School, University of Pennsylvania'},
-  {initials:'GC',name:'Gregor Conrad',role:'Partner & COO',location:'Zürich',
+   edu:'Finance, The Wharton School, University of Pennsylvania'},
+  {initials:'GC',name:'Gregor Conrad',role:'Partner',location:'Zurich',
    bio:`<p>Gregor has a strong track record in the global financial industry with extensive exposure to Asia as an entrepreneur. He is one of the founding partners of an investment boutique in Switzerland and China providing international asset management solutions.</p><p>He started his career at Credit Suisse and subsequently joined Lombard Odier in Zurich as a private equity investment professional focusing on buyout and growth capital transactions across Europe.</p>`,
    edu:'MA in Economics, University of St. Gallen; China Europe International Business School (CEIBS)'},
-  {initials:'MN',name:'Martin von Niederhäusern',role:'Partner',location:'Zürich',
+  {initials:'MN',name:'Martin von Niederhäusern',role:'Partner',location:'Zurich',
    bio:`<p>Martin has a deep understanding of connecting entrepreneurs and companies with like-minded investors. Over recent years, he has advised numerous families, entrepreneurs, and companies on succession planning, strategic M&amp;A transactions, and funding rounds. He was previously part of Citigroup's Global Capital Markets team covering private banks, pension funds, hedge funds, and family offices.</p><p>Earlier he held a global research equity sales role with Lehman Brothers and Nomura International in both Zurich and London, having started his professional career as a financial advisor at a Swiss private bank.</p>`,
    edu:'Banking &amp; Finance, University of Applied Sciences Bern'},
-  {initials:'TP',name:'Tom Pitts',role:'Partner & Chairman',location:'Zürich',
+  {initials:'TP',name:'Tom Pitts',role:'Partner',location:'Zurich',
    bio:`<p>Tom has over 25 years of experience in public and private markets on the buy- and sell-side, including D.E. Shaw, Morgan Stanley, and Credit Suisse. He has held several leadership positions across leveraged finance, equity derivatives, cash equities, and private placements, running distribution groups in both London and Hong Kong.</p><p>Tom is an IC Member and the European Head of LionRock Capital. He serves on the board of Capricorn (Cairn) Energy PLC and Haglöfs AB.</p>`,
    edu:'Economics, Cambridge University'},
-  {initials:'JF',name:'James Foley',role:'Principal',
-   bio:`<p>James has over 17 years of experience in leadership roles across both buy-side and sell-side firms. He was Principal and COO of 3 Twelve Capital, a catalyst-driven hedge fund based in Chicago. Prior to that, he served as Managing Director in the Fixed Income Division at Credit Suisse in London and as Vice President, Equities, at Merrill Lynch International in London. He began his career in the Private Client Division of BMO Nesbitt Burns.</p>`,
+  {initials:'JF',name:'James Foley',role:'Principal',location:'Zurich',
+   bio:`<p>James has over 20 years of experience in leadership roles across both buy-side and sell-side firms. He was Principal and COO of 3 Twelve Capital, a catalyst-driven hedge fund based in Chicago. Prior to that, he served as Managing Director in the Fixed Income Division at Credit Suisse in London and as Vice President, Equities, at Merrill Lynch International in London. He began his career in the Private Client Division of BMO Nesbitt Burns.</p>`,
    edu:'BA, University of Victoria; Corporate Finance, London Business School'},
-  {initials:'PA',name:'Patrick Ackermann',role:'Investment Associate',location:'Zürich',
+  {initials:'PA',name:'Patrick Ackermann',role:'Investment Associate',location:'Zurich',
    bio:`<p>Patrick has five years of experience across private markets and alternative investments. Before joining Basso, he worked at LGT Capital Partners in Frankfurt and Switzerland, where he was responsible for sourcing, evaluating, and executing private debt investments.</p><p>His previous experience includes roles at Credit Suisse and Belvédère Asset Management in Zurich, covering multi-asset investments, structured solutions, and derivatives. He started his career as a banking apprentice at St. Galler Kantonalbank.</p>`,
    edu:'Master in Management (Grande École), HEC Paris; Master in Banking &amp; Finance (MBF), University of St. Gallen'},
   {initials:'DN',name:'Dwight Nelson',role:'Partner',location:'Stamford, USA',
    bio:`<p>Dwight is a Founding Partner of Basso Capital Management, where he has managed multi-strategy hedge funds and managed accounts since 1999, in addition to his own family office.</p><p>Dwight started his career at Grace Brothers, Ltd in Chicago, where he rose to portfolio manager for a multi-strategy hedge fund.</p>`,
    edu:'Economics, University of Chicago'},
   {initials:'RT',name:'Roger Tan',role:'Partner',location:'Singapore',
-   bio:`<p>Roger is an entrepreneur and private equity investor with over 20 years of experience in commodities trading and private equity investments across the Americas, Europe, and APAC. He is a Partner and Board Member at Club Estate AG, a Swiss-based private markets advisory firm specializing in commercial real estate investments for private and institutional investors.</p><p>Roger is an Advisory Board member at Fraxtor, a Singapore prop-tech platform and Co-Founder of RDI Home, a Singapore-based fall detection system company. He is currently completing his doctoral thesis at Singapore Management University.</p>`,
+   bio:`<p>Roger is an entrepreneur and private equity investor with over 20 years of experience in commodities trading and private equity investments across the Americas, Europe, and Asia-Pacific. He is a Partner and Board Member at Club Estate AG, a Swiss-based private markets advisory firm specializing in commercial real estate investments for private and institutional investors.</p><p>Roger is an Advisory Board member at Fraxtor, a Singapore prop-tech platform and Co-Founder of RDI Home, a Singapore-based fall detection system company. He is currently completing his doctoral thesis at Singapore Management University.</p>`,
    edu:'Master in Real Estate, National University of Singapore (NUS); Dual MBA from NUS and UCLA Anderson School of Management'},
 ];
 const advisors = [
@@ -30,7 +30,7 @@ const advisors = [
    bio:`<p>Russ was Managing Director and Chairman of BlackRock Private Equity Partners (PEP) within BlackRock Equity Private Markets (EPM), and previously Global Co-Head of BlackRock Private Equity Partners from 1999–2022. He founded PEP in 1999 when he joined Merrill Lynch Investment Managers, which merged with BlackRock in 2006.</p><p>Prior to founding PEP, Russ was Co-Founder and Managing Director of Fenway Partners and Co-Head of AT&T Pension Fund's PE portfolio. He currently serves on the boards and ICs of several private equity funds and foundations.</p>`,
    edu:'BA, St. Lawrence University; MBA, Amos Tuck School, Dartmouth; MPA, American University'},
   {initials:'CP',name:'Dr. Claudia Petersen',role:'Senior Advisor',isAdvisor:true,
-   bio:`<p>Claudia has over 30 years of experience in private markets. In her previous position, Claudia was the Head of the Julius Baer Private Markets department leading a team of 16 professionals (including investment, structuring, and lifecycle teams) and responsible for CHF 6 billion of client assets across private equity, private debt, and private real estate.</p><p>Before joining Julius Bär, she was Head of Business Development Private Markets and Senior Private Equity Portfolio Manager at Baloise Asset Management. Claudia's prior experience includes launching the Swisscanto Growth Fund for Zürcher Kantonalbank, being a member of the Private Equity Investment team at Partners Group for 15 years, a Managing Director at LGT Private Equity Advisors, and a business consultant at Oliver Wyman.</p>`,
+   bio:`<p>Claudia has over 30 years of experience in private markets. In her previous position, Claudia was the Head of the Julius Bär Private Markets department leading a team of 16 professionals (including investment, structuring, and lifecycle teams) and responsible for CHF 6 billion of client assets across private equity, private debt, and private real estate.</p><p>Before joining Julius Bär, she was Head of Business Development Private Markets and Senior Private Equity Portfolio Manager at Baloise Asset Management. Claudia's prior experience includes launching the Swisscanto Growth Fund for Zürcher Kantonalbank, being a member of the Private Equity Investment team at Partners Group for 15 years, a Managing Director at LGT Private Equity Advisors, and a business consultant at Oliver Wyman.</p>`,
    edu:'Ph.D. in Business Administration, University of St. Gallen; MBA, HEC Paris'},
   {initials:'BO',name:"Ben O'Halloran",role:'Senior Advisor',isAdvisor:true,
    bio:`<p>Ben has over 30 years of experience in M&amp;A, finance, and investment transactions across various industries. He handled M&amp;A in Europe for GE Capital and the GE parent company for 12 years, was a partner at Jones Day, and served as Chief Legal Officer at Verisure.</p>`,
@@ -88,7 +88,7 @@ function toggleTeamMember(card, person, grid, panel) {
   const avatar = portrait
     ? `<div class="bio-photo"><img src="${portrait}" alt="${person.name}" loading="lazy" decoding="async"></div>`
     : `<div class="bio-photo bio-photo-fallback">${person.initials}</div>`;
-  const badge = person.isAdvisor ? `<div class="advisor-badge">Advisory Board</div>` : '';
+  const badge = '';
   const location = person.location ? `<div class="bio-location">${person.location}</div>` : '';
 
   const bioEl = document.createElement('div');

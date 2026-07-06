@@ -21,3 +21,6 @@ _stripped.html
 Thumbs.db
 .vscode/
 .idea/
+
+# Local map backups
+assets/world-map-old*.jpg

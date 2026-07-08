@@ -4,7 +4,7 @@
   "private": true,
   "description": "Static site (Vercel) with serverless contact-form + news endpoints.",
   "dependencies": {
-    "nodemailer": "^6.9.14",
+    "nodemailer": "^9.0.3",
     "@vercel/blob": "^2.6.0"
   }
 }

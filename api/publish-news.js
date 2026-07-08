@@ -87,6 +87,7 @@ module.exports = async function handler(req, res) {
 
     return res.status(200).json({ ok: true, id: id });
   } catch (err) {
+    console.error('publish-news failed:', err && err.stack || err);
     return res.status(502).json({ ok: false, error: 'Could not publish right now.' });
   }
 };

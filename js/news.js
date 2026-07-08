@@ -1,6 +1,6 @@
 /* Basso Global Partners — public News page rendering.
- * Reads from NewsStore, renders cards into #newsGrid, and re-renders live
- * whenever NewsStore changes (admin publish → appears here without reload). */
+ * Reads from NewsStore (Vercel Blob-backed, fetched over the network) and
+ * renders cards into #newsGrid. */
 (function () {
   'use strict';
 
@@ -21,10 +21,9 @@
     return (day + month + ' ' + m[1]).trim();
   }
 
-  // Only allow safe hrefs (PDF data URLs today, http(s) URLs once on Supabase)
+  // Only allow safe hrefs — PDFs are https:// Vercel Blob URLs
   function safeHref(url) {
     if (!url) return '';
-    if (/^data:application\/pdf/i.test(url)) return url;
     if (/^https?:\/\//i.test(url)) return url;
     return '';
   }
@@ -44,20 +43,20 @@
   function render() {
     var grid = document.getElementById('newsGrid');
     var empty = document.getElementById('newsEmpty');
-    if (!grid) return;
-    var items = window.NewsStore ? NewsStore.getPublished() : [];
-    if (!items.length) {
-      grid.innerHTML = '';
-      grid.style.display = 'none';
-      if (empty) empty.style.display = '';
-      return;
-    }
-    if (empty) empty.style.display = 'none';
-    grid.style.display = '';
-    grid.innerHTML = items.map(cardHTML).join('');
+    if (!grid || !window.NewsStore) return;
+    NewsStore.getPublished().then(function (items) {
+      if (!items.length) {
+        grid.innerHTML = '';
+        grid.style.display = 'none';
+        if (empty) empty.style.display = '';
+        return;
+      }
+      if (empty) empty.style.display = 'none';
+      grid.style.display = '';
+      grid.innerHTML = items.map(cardHTML).join('');
+    });
   }
 
-  if (window.NewsStore) NewsStore.subscribe(render);
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', render);
   } else {

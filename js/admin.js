@@ -1,26 +1,28 @@
-/* Basso Global Partners — News Admin (frontend-only demo).
- *
- * ⚠️ SECURITY: the client-side password gate has been REMOVED — a password
- * shipped in this file is readable by anyone and provides NO protection. This
- * admin only edits the visitor's OWN localStorage (no shared data), so the gate
- * was security theatre. Real protection must come from server-verified Supabase
- * Auth before this goes anywhere near production. Do not store anything
- * sensitive here.
- */
+/* Basso Global Partners — News console (publishes to Vercel Blob storage,
+ * no database). Publishing is real and goes live for every site visitor —
+ * protected server-side by ADMIN_KEY (see /api/publish-news, /api/delete-news).
+ * The key is entered here and sent per request; it's kept in sessionStorage
+ * only so it doesn't need retyping for every action in the same tab. */
 (function () {
   'use strict';
 
-  var MAX_PDF_BYTES = 2 * 1024 * 1024; // ~2MB demo cap (localStorage). Supabase Storage removes this.
-
   var $ = function (id) { return document.getElementById(id); };
+  var MAX_PDF_BYTES = 2 * 1024 * 1024;
+  var KEY_STORE = 'basso_admin_key';
 
-  function showDash(on) {
-    var dash = $('dash');
-    if (dash) dash.hidden = !on;
-    if (on) renderList();
+  (function restoreKey() {
+    var el = $('admin-key');
+    var saved = sessionStorage.getItem(KEY_STORE);
+    if (el && saved) el.value = saved;
+  })();
+
+  function adminKey() {
+    var el = $('admin-key');
+    var v = el ? el.value.trim() : '';
+    if (v) sessionStorage.setItem(KEY_STORE, v);
+    return v;
   }
 
-  /* ── Publish ──────────────────────────────────────────────────────── */
   function msg(text, kind) {
     var el = $('formMsg');
     el.textContent = text || '';
@@ -36,21 +38,21 @@
     });
   }
 
+  /* ── Publish ──────────────────────────────────────────────────────── */
   $('newsForm').addEventListener('submit', function (e) {
     e.preventDefault();
+    var key = adminKey();
     var title = $('f-title').value.trim();
     var date = $('f-date').value;
     var category = $('f-category').value.trim();
     var excerpt = $('f-excerpt').value.trim();
     var file = $('f-pdf').files[0];
 
+    if (!key) { msg('Admin key required.', 'err'); return; }
     if (!title || !date) { msg('Title and date are required.', 'err'); return; }
     if (!file) { msg('Please choose a PDF.', 'err'); return; }
     if (file.type !== 'application/pdf') { msg('File must be a PDF.', 'err'); return; }
-    if (file.size > MAX_PDF_BYTES) {
-      msg('PDF over 2 MB. (Demo cap — the Supabase Storage backend removes this.)', 'err');
-      return;
-    }
+    if (file.size > MAX_PDF_BYTES) { msg('PDF over 2 MB.', 'err'); return; }
 
     var btn = $('publishBtn');
     btn.disabled = true; msg('Publishing…');
@@ -62,13 +64,16 @@
         excerpt: excerpt,
         pdf: dataUrl,
         pdfName: file.name
-      });
+      }, key);
     }).then(function () {
-      e.target.reset();
-      msg('Published ✓', 'ok');
-      setTimeout(function () { msg(''); }, 2600);
-    }).catch(function () {
-      msg('Something went wrong.', 'err');
+      $('newsForm').reset();
+      $('admin-key').value = key; // keep the key filled in for the next publish
+      msg('Published ✓ — live on the site now', 'ok');
+      renderList();
+      setTimeout(function () { msg(''); }, 3200);
+    }).catch(function (err) {
+      var authErr = /not authorized/i.test((err && err.message) || '');
+      msg(authErr ? 'Wrong admin key.' : 'Something went wrong.', 'err');
     }).then(function () { btn.disabled = false; });
   });
 
@@ -81,30 +86,32 @@
 
   function renderList() {
     var wrap = $('adminList');
-    var items = NewsStore.getAll();
-    $('count').textContent = items.length ? '· ' + items.length : '';
-    if (!items.length) {
-      wrap.innerHTML = '<div class="empty">No news published yet.</div>';
-      return;
-    }
-    wrap.innerHTML = items.map(function (n) {
-      var pdf = /^data:application\/pdf/i.test(n.pdf) || /^https?:\/\//i.test(n.pdf)
-        ? ' · <a href="' + n.pdf + '" target="_blank" rel="noopener">PDF</a>' : '';
-      return '<div class="news-row">' +
-        '<div class="meta"><div class="t">' + esc(n.title) + '</div>' +
-        '<div class="d">' + esc(n.date) + (n.category ? ' · ' + esc(n.category) : '') + pdf + '</div></div>' +
-        '<button class="row-del" data-id="' + esc(n.id) + '">Delete</button></div>';
-    }).join('');
-    wrap.querySelectorAll('.row-del').forEach(function (b) {
-      b.addEventListener('click', function () {
-        if (confirm('Delete this news item?')) NewsStore.remove(b.getAttribute('data-id'));
+    NewsStore.getAll().then(function (items) {
+      $('count').textContent = items.length ? '· ' + items.length : '';
+      if (!items.length) {
+        wrap.innerHTML = '<div class="empty">No news published yet.</div>';
+        return;
+      }
+      wrap.innerHTML = items.map(function (n) {
+        var pdf = n.pdf ? ' · <a href="' + esc(n.pdf) + '" target="_blank" rel="noopener">PDF</a>' : '';
+        return '<div class="news-row">' +
+          '<div class="meta"><div class="t">' + esc(n.title) + '</div>' +
+          '<div class="d">' + esc(n.date) + (n.category ? ' · ' + esc(n.category) : '') + pdf + '</div></div>' +
+          '<button class="row-del" data-id="' + esc(n.id) + '">Delete</button></div>';
+      }).join('');
+      wrap.querySelectorAll('.row-del').forEach(function (b) {
+        b.addEventListener('click', function () {
+          if (!confirm('Delete this news item? This removes it from the live site.')) return;
+          var key = adminKey();
+          if (!key) { alert('Admin key required.'); return; }
+          NewsStore.remove(b.getAttribute('data-id'), key).then(renderList).catch(function () {
+            alert('Delete failed — check the admin key.');
+          });
+        });
       });
     });
   }
 
-  // Live: re-render when the store changes (this tab or another tab)
-  NewsStore.subscribe(function () { renderList(); });
-
   /* ── Init ─────────────────────────────────────────────────────────── */
-  showDash(true);
+  renderList();
 })();

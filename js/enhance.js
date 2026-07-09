@@ -157,6 +157,53 @@
     });
   }
 
+  /* ── 4b. Newsletter signup → POST to /api/newsletter (same pattern as the
+     contact form) — sends server-side instead of opening the visitor's mail
+     app with a mailto: draft. */
+  function setupNewsletterForm() {
+    var btn = document.getElementById('newsletter-submit');
+    var input = document.getElementById('newsletter-email');
+    if (!btn || !input) return;
+
+    var label = btn.textContent;
+    var flash = function (msg) {
+      btn.textContent = msg;
+      setTimeout(function () { btn.textContent = label; }, 3200);
+    };
+
+    btn.addEventListener('click', function () {
+      var email = input.value.trim();
+      if (!email || email.indexOf('@') < 0) {
+        input.style.borderColor = 'rgba(201,168,76,0.6)';
+        flash('Please enter a valid email address');
+        return;
+      }
+
+      var hp = document.getElementById('newsletter-hp');
+      var payload = { email: email, company_url: hp ? hp.value : '' };
+
+      btn.disabled = true;
+      flash('Sending…');
+
+      fetch('/api/newsletter', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      })
+        .then(function (r) { return r.json().catch(function () { return { ok: false }; }); })
+        .then(function (data) {
+          if (data && data.ok) {
+            flash('Subscribed ✓');
+            input.value = '';
+          } else {
+            flash('Could not subscribe — please try again');
+          }
+        })
+        .catch(function () { flash('Could not subscribe — please try again'); })
+        .then(function () { btn.disabled = false; });
+    });
+  }
+
   /* ── 5. Mobile nav — inject a hamburger toggle (no markup change) ── */
   function setupMobileNav() {
     var nav = document.getElementById('mainNav');
@@ -201,5 +248,6 @@
   setupCountUp();
   setupRouting();
   setupContactForm();
+  setupNewsletterForm();
   setupKeyboardActivation();
 })();

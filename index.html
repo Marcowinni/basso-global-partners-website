@@ -501,8 +501,10 @@
     <h2 style="font-family:'Cormorant Garamond',serif;font-size:38px;font-weight:400;color:var(--white);margin-bottom:16px;line-height:1.2;">Subscribe to Our Quarterly Newsletter</h2>
     <p style="font-size:15px;color:rgba(255,255,255,0.6);max-width:560px;margin:0 auto 36px;line-height:1.8;font-weight:300;">Receive insights on key private market developments, our Investment Committee&#x2019;s views, and our latest co-investments &#x2014; delivered directly to your inbox each quarter.</p>
     <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;max-width:520px;margin:0 auto;">
-      <input type="email" aria-label="Email address" placeholder="Your email address" style="flex:1;min-width:220px;padding:14px 18px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.2);color:#fff;font-size:14px;font-family:'DM Sans',sans-serif;outline:none;">
-      <button onclick="handleNewsletterSignup(this)" style="padding:14px 28px;background:var(--gold);color:var(--navy);font-size:11px;font-weight:600;letter-spacing:2px;text-transform:uppercase;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;transition:opacity .2s;" onmouseover="this.style.opacity='0.85'" onmouseout="this.style.opacity='1'">Subscribe</button>
+      <input type="email" id="newsletter-email" aria-label="Email address" placeholder="Your email address" style="flex:1;min-width:220px;padding:14px 18px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.2);color:#fff;font-size:14px;font-family:'DM Sans',sans-serif;outline:none;">
+      <!-- Honeypot: hidden from humans, catches bots. Must stay empty. -->
+      <input type="text" id="newsletter-hp" name="company_url" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0">
+      <button id="newsletter-submit" style="padding:14px 28px;background:var(--gold);color:var(--navy);font-size:11px;font-weight:600;letter-spacing:2px;text-transform:uppercase;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;transition:opacity .2s;" onmouseover="this.style.opacity='0.85'" onmouseout="this.style.opacity='1'">Subscribe</button>
     </div>
   </div>
 

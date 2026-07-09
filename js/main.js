@@ -122,25 +122,6 @@ buildTeamGrid(partners, 'teamGrid', null);
 buildTeamGrid(advisors, 'advisorGrid', null);
 
 // ── NAV ──
-// Newsletter signup — no backend, so compose a mailto to investor relations
-// (same approach as the contact form). The subscriber's address goes in the
-// body so it reaches the internal IR inbox.
-function handleNewsletterSignup(btn) {
-  const input = btn.previousElementSibling;
-  const email = input ? input.value.trim() : '';
-  if (!email || !email.includes('@')) {
-    input.style.borderColor = 'rgba(201,168,76,0.6)';
-    input.placeholder = 'Please enter a valid email address';
-    return;
-  }
-  const subject = 'Newsletter subscription request';
-  const body = 'Please add the following address to the Basso quarterly newsletter:\n\n' + email + '\n';
-  window.location.href = 'mailto:ir@bassoglobalpartners.com' +
-    '?subject=' + encodeURIComponent(subject) +
-    '&body=' + encodeURIComponent(body);
-  btn.textContent = 'Opening your mail app…';
-  input.value = '';
-}
 
 function showPage(name) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));

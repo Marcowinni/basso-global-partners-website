@@ -6,7 +6,7 @@
 // news/pdfs/ only.
 const { handleUpload } = require('@vercel/blob/client');
 
-const MAX_UPLOAD_BYTES = 20 * 1024 * 1024;
+const MAX_UPLOAD_BYTES = 200 * 1024 * 1024;
 const PATH_PREFIX = 'news/pdfs/';
 
 module.exports = async function handler(req, res) {

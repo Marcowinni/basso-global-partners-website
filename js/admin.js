@@ -14,7 +14,7 @@ import { upload } from 'https://esm.sh/@vercel/blob@2.6.0/client';
   'use strict';
 
   var $ = function (id) { return document.getElementById(id); };
-  var MAX_PDF_BYTES = 20 * 1024 * 1024;
+  var MAX_PDF_BYTES = 200 * 1024 * 1024;
   var KEY_STORE = 'basso_admin_key';
 
   (function restoreKey() {
@@ -54,7 +54,7 @@ import { upload } from 'https://esm.sh/@vercel/blob@2.6.0/client';
     if (!title || !date) { msg('Title and date are required.', 'err'); return; }
     if (!file) { msg('Please choose a PDF.', 'err'); return; }
     if (file.type !== 'application/pdf') { msg('File must be a PDF.', 'err'); return; }
-    if (file.size > MAX_PDF_BYTES) { msg('PDF over 20 MB.', 'err'); return; }
+    if (file.size > MAX_PDF_BYTES) { msg('PDF over 200 MB.', 'err'); return; }
 
     var id = genId();
     var btn = $('publishBtn');
@@ -64,7 +64,8 @@ import { upload } from 'https://esm.sh/@vercel/blob@2.6.0/client';
       access: 'public',
       contentType: 'application/pdf',
       handleUploadUrl: '/api/blob-upload-token',
-      headers: { 'x-admin-key': key }
+      headers: { 'x-admin-key': key },
+      multipart: true // chunked + per-part retry — matters at this file size
     }).then(function (blob) {
       msg('Publishing…');
       return NewsStore.add({

@@ -2,17 +2,17 @@
 // (no database; the PDF and the news/news.json index both live in Blob).
 // Requires ADMIN_KEY (server-side secret) via the x-admin-key header — this
 // endpoint writes to a page every visitor sees, so it must not be open.
+//
+// The PDF itself is uploaded directly from the browser to Blob via
+// /api/blob-upload-token (bypasses the function body-size limit) — this
+// endpoint only ever receives small JSON metadata + the resulting blob URL.
 const { list, put } = require('@vercel/blob');
 
 const NEWS_PATH = 'news/news.json';
-const MAX_PDF_BYTES = 2 * 1024 * 1024;
+const PDF_URL_RE = /^https:\/\/[a-z0-9-]+\.public\.blob\.vercel-storage\.com\/news\/pdfs\/.+\.pdf$/i;
 
 function clean(v, max) {
   return String(v == null ? '' : v).trim().slice(0, max);
-}
-
-function genId() {
-  return 'n_' + Math.random().toString(36).slice(2, 10) + Date.now().toString(36);
 }
 
 async function readNews() {
@@ -38,33 +38,22 @@ module.exports = async function handler(req, res) {
   if (typeof body === 'string') { try { body = JSON.parse(body); } catch (e) { body = {}; } }
   body = body || {};
 
+  const id = clean(body.id, 40);
   const title = clean(body.title, 160);
   const date = clean(body.date, 20);
   const category = clean(body.category, 40);
   const excerpt = clean(body.excerpt, 320);
   const pdfName = clean(body.pdfName, 120);
-  const pdfDataUrl = String(body.pdf || '');
+  const pdfUrl = String(body.pdfUrl || '');
 
-  if (!title || !date) {
+  if (!id || !title || !date) {
     return res.status(400).json({ ok: false, error: 'Title and date are required.' });
   }
-  const m = /^data:application\/pdf;base64,(.+)$/.exec(pdfDataUrl);
-  if (!m) {
-    return res.status(400).json({ ok: false, error: 'A PDF file is required.' });
-  }
-  const pdfBuffer = Buffer.from(m[1], 'base64');
-  if (pdfBuffer.length > MAX_PDF_BYTES) {
-    return res.status(400).json({ ok: false, error: 'PDF over 2 MB.' });
+  if (!PDF_URL_RE.test(pdfUrl)) {
+    return res.status(400).json({ ok: false, error: 'Invalid PDF upload.' });
   }
 
   try {
-    const id = genId();
-    const pdfBlob = await put('news/pdfs/' + id + '.pdf', pdfBuffer, {
-      access: 'public',
-      addRandomSuffix: false,
-      contentType: 'application/pdf'
-    });
-
     const items = await readNews();
     items.push({
       id: id,
@@ -72,7 +61,7 @@ module.exports = async function handler(req, res) {
       date: date,
       category: category,
       excerpt: excerpt,
-      pdf: pdfBlob.url,
+      pdf: pdfUrl,
       pdfName: pdfName,
       created: Date.now()
     });

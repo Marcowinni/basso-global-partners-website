@@ -1,13 +1,20 @@
 /* Basso Global Partners — News console (publishes to Vercel Blob storage,
  * no database). Publishing is real and goes live for every site visitor —
- * protected server-side by ADMIN_KEY (see /api/publish-news, /api/delete-news).
- * The key is entered here and sent per request; it's kept in sessionStorage
- * only so it doesn't need retyping for every action in the same tab. */
+ * protected server-side by ADMIN_KEY (see /api/blob-upload-token,
+ * /api/publish-news, /api/delete-news). The key is entered here and sent per
+ * request; it's kept in sessionStorage only so it doesn't need retyping for
+ * every action in the same tab.
+ *
+ * PDFs upload directly from the browser to Vercel Blob (bypasses the ~4.5 MB
+ * request-body limit Vercel enforces on serverless functions) — pin the esm.sh
+ * version to match the @vercel/blob version in package.json when bumping. */
+import { upload } from 'https://esm.sh/@vercel/blob@2.6.0/client';
+
 (function () {
   'use strict';
 
   var $ = function (id) { return document.getElementById(id); };
-  var MAX_PDF_BYTES = 2 * 1024 * 1024;
+  var MAX_PDF_BYTES = 20 * 1024 * 1024;
   var KEY_STORE = 'basso_admin_key';
 
   (function restoreKey() {
@@ -29,13 +36,8 @@
     el.className = kind || '';
   }
 
-  function readFileAsDataURL(file) {
-    return new Promise(function (resolve, reject) {
-      var r = new FileReader();
-      r.onload = function () { resolve(r.result); };
-      r.onerror = function () { reject(new Error('read failed')); };
-      r.readAsDataURL(file);
-    });
+  function genId() {
+    return 'n_' + Math.random().toString(36).slice(2, 10) + Date.now().toString(36);
   }
 
   /* ── Publish ──────────────────────────────────────────────────────── */
@@ -52,17 +54,26 @@
     if (!title || !date) { msg('Title and date are required.', 'err'); return; }
     if (!file) { msg('Please choose a PDF.', 'err'); return; }
     if (file.type !== 'application/pdf') { msg('File must be a PDF.', 'err'); return; }
-    if (file.size > MAX_PDF_BYTES) { msg('PDF over 2 MB.', 'err'); return; }
+    if (file.size > MAX_PDF_BYTES) { msg('PDF over 20 MB.', 'err'); return; }
 
+    var id = genId();
     var btn = $('publishBtn');
-    btn.disabled = true; msg('Publishing…');
-    readFileAsDataURL(file).then(function (dataUrl) {
+    btn.disabled = true; msg('Uploading…');
+
+    upload('news/pdfs/' + id + '.pdf', file, {
+      access: 'public',
+      contentType: 'application/pdf',
+      handleUploadUrl: '/api/blob-upload-token',
+      headers: { 'x-admin-key': key }
+    }).then(function (blob) {
+      msg('Publishing…');
       return NewsStore.add({
+        id: id,
         title: title,
         date: date,
         category: category,
         excerpt: excerpt,
-        pdf: dataUrl,
+        pdfUrl: blob.url,
         pdfName: file.name
       }, key);
     }).then(function () {
@@ -72,7 +83,11 @@
       renderList();
       setTimeout(function () { msg(''); }, 3200);
     }).catch(function (err) {
-      var authErr = /not authorized/i.test((err && err.message) || '');
+      // The upload() SDK call swallows our /api/blob-upload-token error body and
+      // always throws this generic message on a non-2xx response — in practice
+      // that only happens here on a wrong admin key, since path/content-type are
+      // fixed by this form.
+      var authErr = /not authorized|failed to retrieve the client token/i.test((err && err.message) || '');
       msg(authErr ? 'Wrong admin key.' : 'Something went wrong.', 'err');
     }).then(function () { btn.disabled = false; });
   });

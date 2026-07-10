@@ -26,3 +26,4 @@ Thumbs.db
 
 # Local map backups
 assets/world-map-old*.jpg
+.vercel

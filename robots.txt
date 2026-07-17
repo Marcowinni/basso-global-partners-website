@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /news-console
+Disallow: /news-console.html
+Disallow: /login.html
+
+Sitemap: https://www.bassoglobalpartners.com/sitemap.xml

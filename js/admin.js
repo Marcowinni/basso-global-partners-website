@@ -60,6 +60,8 @@ import { upload } from 'https://esm.sh/@vercel/blob@2.6.0/client';
     var btn = $('publishBtn');
     btn.disabled = true; msg('Uploading…');
 
+    // Uploaded under the opaque id; /api/publish-news renames it to a
+    // title-based pathname once the title is validated server-side.
     upload('news/pdfs/' + id + '.pdf', file, {
       access: 'public',
       contentType: 'application/pdf',
@@ -127,6 +129,52 @@ import { upload } from 'https://esm.sh/@vercel/blob@2.6.0/client';
       });
     });
   }
+
+  /* ── Maintenance: rename legacy PDF blob pathnames ────────────────── */
+  function renameMsg(html) { $('renameMsg').innerHTML = html; }
+
+  function runRename(dryRun) {
+    var key = adminKey();
+    if (!key) { renameMsg('Admin key required.'); return; }
+
+    $('renameCheckBtn').disabled = true;
+    $('renameRunBtn').disabled = true;
+    renameMsg(dryRun ? 'Checking…' : 'Renaming…');
+
+    fetch('/api/rename-news-pdfs', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'x-admin-key': key },
+      body: JSON.stringify({ dryRun: dryRun })
+    }).then(function (r) {
+      return r.json().catch(function () { return {}; }).then(function (data) {
+        if (!r.ok || !data.ok) throw new Error((data && data.error) || 'Request failed');
+        return data;
+      });
+    }).then(function (data) {
+      if (!data.items.length) { renameMsg('All PDF filenames are already correct.'); return; }
+      var failed = data.items.filter(function (i) { return i.status === 'failed'; }).length;
+      var head = data.dryRun
+        ? data.items.length + ' PDF(s) would be renamed:'
+        : (data.items.length - failed) + ' PDF(s) renamed' + (failed ? ', ' + failed + ' failed' : '') + ':';
+      renameMsg(esc(head) + data.items.map(function (i) {
+        return '<span class="r">' + esc(i.from) + ' → ' + esc(i.to) +
+          (i.status === 'failed' ? ' — FAILED' : '') + '</span>';
+      }).join(''));
+      if (!data.dryRun) renderList();
+    }).catch(function (err) {
+      var authErr = /not authorized/i.test((err && err.message) || '');
+      renameMsg(authErr ? 'Wrong admin key.' : 'Something went wrong.');
+    }).then(function () {
+      $('renameCheckBtn').disabled = false;
+      $('renameRunBtn').disabled = false;
+    });
+  }
+
+  $('renameCheckBtn').addEventListener('click', function () { runRename(true); });
+  $('renameRunBtn').addEventListener('click', function () {
+    if (!confirm('Rename the PDF files of all published news items? Existing direct links to those PDFs will stop working.')) return;
+    runRename(false);
+  });
 
   /* ── Init ─────────────────────────────────────────────────────────── */
   renderList();

@@ -6,7 +6,8 @@
 // The PDF itself is uploaded directly from the browser to Blob via
 // /api/blob-upload-token (bypasses the function body-size limit) — this
 // endpoint only ever receives small JSON metadata + the resulting blob URL.
-const { list, put } = require('@vercel/blob');
+const { list, put, rename } = require('@vercel/blob');
+const { pdfPathname } = require('./_slug');
 
 const NEWS_PATH = 'news/news.json';
 const PDF_URL_RE = /^https:\/\/[a-z0-9-]+\.public\.blob\.vercel-storage\.com\/news\/pdfs\/.+\.pdf$/i;
@@ -54,6 +55,19 @@ module.exports = async function handler(req, res) {
   }
 
   try {
+    // Give the blob a title-based pathname so the reader's saved file is named
+    // after the article. Cosmetic — never worth failing an otherwise good
+    // publish, so a failure here keeps the upload URL as-is.
+    let finalPdfUrl = pdfUrl;
+    try {
+      const renamed = await rename(pdfUrl, pdfPathname(title, id), {
+        access: 'public',
+        addRandomSuffix: false,
+        contentType: 'application/pdf'
+      });
+      finalPdfUrl = renamed.url;
+    } catch (e) { /* keep pdfUrl */ }
+
     const items = await readNews();
     items.push({
       id: id,
@@ -61,7 +75,7 @@ module.exports = async function handler(req, res) {
       date: date,
       category: category,
       excerpt: excerpt,
-      pdf: pdfUrl,
+      pdf: finalPdfUrl,
       pdfName: pdfName,
       created: Date.now()
     });

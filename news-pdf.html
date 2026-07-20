@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex,nofollow">
+<title>Basso Global Partners — News</title>
+<link rel="icon" type="image/png" href="assets/favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/styles.css">
+<style>
+  body{background:var(--off);height:100vh;display:flex;flex-direction:column;overflow:hidden}
+  .pdf-bar{background:var(--navy);display:flex;align-items:center;justify-content:space-between;gap:20px;padding:0 32px;height:64px;flex-shrink:0}
+  .pdf-bar-left{display:flex;align-items:center;gap:18px;min-width:0}
+  .pdf-bar img{height:28px;filter:brightness(0) invert(1);flex-shrink:0}
+  .pdf-bar-title{font-family:'Cormorant Garamond',serif;font-size:18px;color:var(--white);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .pdf-bar-meta{font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,.45);white-space:nowrap}
+  .pdf-bar-right{display:flex;align-items:center;gap:18px;flex-shrink:0}
+  .pdf-bar-link{font-size:11px;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,.7);text-decoration:none;transition:color .2s}
+  .pdf-bar-link:hover{color:var(--gold)}
+  .pdf-frame{flex:1;width:100%;border:none;background:var(--off)}
+  .pdf-msg{flex:1;display:flex;align-items:center;justify-content:center;font-size:14px;color:var(--muted);padding:40px;text-align:center}
+  @media(max-width:700px){
+    .pdf-bar{padding:0 18px;height:56px;gap:12px}
+    .pdf-bar img{height:22px}
+    .pdf-bar-title{font-size:15px}
+    .pdf-bar-meta{display:none}
+  }
+</style>
+</head>
+<body>
+
+<div class="pdf-bar">
+  <div class="pdf-bar-left">
+    <a href="/#news"><img src="assets/logo-nav.png" alt="Basso Global Partners"></a>
+    <div class="pdf-bar-title" id="pdfTitle">Loading…</div>
+    <div class="pdf-bar-meta" id="pdfMeta"></div>
+  </div>
+  <div class="pdf-bar-right">
+    <a class="pdf-bar-link" id="pdfDownload" href="#" download hidden>Download ↓</a>
+    <a class="pdf-bar-link" href="/#news">← All news</a>
+  </div>
+</div>
+
+<div class="pdf-msg" id="pdfMsg">Loading document…</div>
+<iframe class="pdf-frame" id="pdfFrame" title="Document" hidden></iframe>
+
+<script src="js/news-store.js"></script>
+<script src="js/news-pdf.js"></script>
+</body>
+</html>

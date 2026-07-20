@@ -57,6 +57,13 @@
   .row-del:hover{border-color:#b3261e;color:#b3261e}
   .empty{font-size:14px;color:var(--muted);font-weight:300;padding:8px 0}
 
+  .maint-note{font-size:13px;color:var(--muted);line-height:1.7;margin-bottom:18px}
+  .maint-note code{font-family:ui-monospace,monospace;font-size:12px;background:var(--off);padding:1px 5px}
+  .maint-actions{display:flex;gap:12px;flex-wrap:wrap}
+  .btn-ghost-admin{background:transparent;color:var(--navy);border:1px solid var(--border)}
+  #renameMsg{font-size:13px;line-height:1.7;margin-top:16px;min-height:18px}
+  #renameMsg .r{display:block;color:var(--muted);font-size:12px;font-family:ui-monospace,monospace;word-break:break-all}
+
   @media(max-width:640px){
     .admin-bar{padding:0 18px}.admin-main{padding:24px 16px 60px}
     .admin-card{padding:22px}#newsForm .row{grid-template-columns:1fr}
@@ -97,6 +104,16 @@
     <section class="admin-card">
       <h2>Published <span id="count"></span></h2>
       <div id="adminList"><div class="empty">Loading…</div></div>
+    </section>
+
+    <section class="admin-card">
+      <h2>Maintenance</h2>
+      <p class="maint-note">Older PDFs were stored under an internal id, so readers saving them got a filename like <code>n_k3f9a2x1m.pdf</code>. This renames them after their article title. Safe to run more than once.</p>
+      <div class="maint-actions">
+        <button class="btn btn-ghost-admin" id="renameCheckBtn" type="button">Check filenames</button>
+        <button class="btn" id="renameRunBtn" type="button">Rename PDFs</button>
+      </div>
+      <div id="renameMsg"></div>
     </section>
   </main>
 </div>

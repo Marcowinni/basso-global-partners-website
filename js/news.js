@@ -21,15 +21,15 @@
     return (day + month + ' ' + m[1]).trim();
   }
 
-  // Only allow safe hrefs — PDFs are https:// Vercel Blob URLs
-  function safeHref(url) {
-    if (!url) return '';
-    if (/^https?:\/\//i.test(url)) return url;
-    return '';
+  // PDFs open through our own viewer page rather than the raw Blob URL, so the
+  // tab shows the article title instead of the PDF's exporter metadata.
+  function viewerHref(n) {
+    if (!n.pdf || !n.id) return '';
+    return 'news-pdf.html?id=' + encodeURIComponent(n.id);
   }
 
   function cardHTML(n) {
-    var href = safeHref(n.pdf);
+    var href = viewerHref(n);
     var tag = n.category ? '<div class="news-tag">' + esc(n.category) + '</div>' : '';
     var date = n.date ? '<div class="news-date">' + esc(fmtDate(n.date)) + '</div>' : '';
     var excerpt = n.excerpt ? '<div class="news-excerpt">' + esc(n.excerpt) + '</div>' : '';

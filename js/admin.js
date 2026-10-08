@@ -89,8 +89,10 @@ import { upload } from 'https://esm.sh/@vercel/blob@2.6.0/client';
       // The upload() SDK call swallows our /api/blob-upload-token error body and
       // always throws this generic message on a non-2xx response — in practice
       // that only happens here on a wrong admin key, since path/content-type are
-      // fixed by this form.
-      var authErr = /not authorized|failed to retrieve the client token/i.test((err && err.message) || '');
+      // fixed by this form. \s+ because @vercel/blob 2.6.0 spells it with a
+      // double space ("Failed to  retrieve the client token").
+      console.error('News publish failed:', err);
+      var authErr = /not authorized|failed to\s+retrieve the client token/i.test((err && err.message) || '');
       msg(authErr ? 'Wrong admin key.' : 'Something went wrong.', 'err');
     }).then(function () { btn.disabled = false; });
   });

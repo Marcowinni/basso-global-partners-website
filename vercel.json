@@ -1,5 +1,16 @@
 {
   "regions": ["fra1"],
+  "crons": [
+    { "path": "/api/smtp-health", "schedule": "0 7 1 * *" }
+  ],
+  "redirects": [
+    {
+      "source": "/((?!api/).*)",
+      "has": [{ "type": "host", "value": "basso-global-partners-website-test.vercel.app" }],
+      "destination": "https://www.bassoglobalpartners.com/$1",
+      "permanent": true
+    }
+  ],
   "rewrites": [
     { "source": "/news-console", "destination": "/news-console.html" },
     { "source": "/news-pdf", "destination": "/news-pdf.html" }

@@ -6,8 +6,9 @@
  * every action in the same tab.
  *
  * PDFs upload directly from the browser to Vercel Blob (bypasses the ~4.5 MB
- * request-body limit Vercel enforces on serverless functions) — pin the esm.sh
- * version to match the @vercel/blob version in package.json when bumping. */
+ * request-body limit Vercel enforces on serverless functions). Known-good pair,
+ * verified with a live upload 2026-10-08: this client 2.6.0 + server 2.8.1
+ * (locked in package-lock.json). Bump both together and re-test an upload. */
 import { upload } from 'https://esm.sh/@vercel/blob@2.6.0/client';
 
 (function () {
@@ -131,52 +132,6 @@ import { upload } from 'https://esm.sh/@vercel/blob@2.6.0/client';
       });
     });
   }
-
-  /* ── Maintenance: rename legacy PDF blob pathnames ────────────────── */
-  function renameMsg(html) { $('renameMsg').innerHTML = html; }
-
-  function runRename(dryRun) {
-    var key = adminKey();
-    if (!key) { renameMsg('Admin key required.'); return; }
-
-    $('renameCheckBtn').disabled = true;
-    $('renameRunBtn').disabled = true;
-    renameMsg(dryRun ? 'Checking…' : 'Renaming…');
-
-    fetch('/api/rename-news-pdfs', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'x-admin-key': key },
-      body: JSON.stringify({ dryRun: dryRun })
-    }).then(function (r) {
-      return r.json().catch(function () { return {}; }).then(function (data) {
-        if (!r.ok || !data.ok) throw new Error((data && data.error) || 'Request failed');
-        return data;
-      });
-    }).then(function (data) {
-      if (!data.items.length) { renameMsg('All PDF filenames are already correct.'); return; }
-      var failed = data.items.filter(function (i) { return i.status === 'failed'; }).length;
-      var head = data.dryRun
-        ? data.items.length + ' PDF(s) would be renamed:'
-        : (data.items.length - failed) + ' PDF(s) renamed' + (failed ? ', ' + failed + ' failed' : '') + ':';
-      renameMsg(esc(head) + data.items.map(function (i) {
-        return '<span class="r">' + esc(i.from) + ' → ' + esc(i.to) +
-          (i.status === 'failed' ? ' — FAILED' : '') + '</span>';
-      }).join(''));
-      if (!data.dryRun) renderList();
-    }).catch(function (err) {
-      var authErr = /not authorized/i.test((err && err.message) || '');
-      renameMsg(authErr ? 'Wrong admin key.' : 'Something went wrong.');
-    }).then(function () {
-      $('renameCheckBtn').disabled = false;
-      $('renameRunBtn').disabled = false;
-    });
-  }
-
-  $('renameCheckBtn').addEventListener('click', function () { runRename(true); });
-  $('renameRunBtn').addEventListener('click', function () {
-    if (!confirm('Rename the PDF files of all published news items? Existing direct links to those PDFs will stop working.')) return;
-    runRename(false);
-  });
 
   /* ── Init ─────────────────────────────────────────────────────────── */
   renderList();

@@ -133,6 +133,19 @@
         company_url: v('contact-hp') // honeypot — real users leave it empty
       };
 
+      // When our mail service is down the inquiry must not be lost: offer the
+      // visitor's own mail app with the message pre-filled instead.
+      var offerMailFallback = function () {
+        if (!window.confirm('Sending failed on our side. Open your email app with your message instead?')) return;
+        var body = 'Name: ' + (payload.firstName + ' ' + payload.lastName).trim() + '\n' +
+          'Organization: ' + payload.organization + '\n' +
+          'Inquiry type: ' + payload.inquiryType + '\n\n' +
+          payload.message.slice(0, 1500); // mailto: URLs get truncated by some mail apps
+        window.location.href = 'mailto:ir@bassoglobalpartners.com' +
+          '?subject=' + encodeURIComponent('Website inquiry — ' + (payload.inquiryType || 'General Inquiry')) +
+          '&body=' + encodeURIComponent(body);
+      };
+
       btn.disabled = true;
       flash('Sending…');
 
@@ -141,18 +154,22 @@
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
       })
-        .then(function (r) { return r.json().catch(function () { return { ok: false }; }); })
-        .then(function (data) {
-          if (data && data.ok) {
+        .then(function (r) {
+          return r.json().catch(function () { return {}; })
+            .then(function (data) { return { status: r.status, data: data }; });
+        })
+        .then(function (result) {
+          if (result.data && result.data.ok) {
             flash('Thank you — message sent ✓');
             ['contact-first', 'contact-last', 'contact-org', 'contact-email', 'contact-message']
               .forEach(function (id) { var el = document.getElementById(id); if (el) el.value = ''; });
             if (consent) consent.checked = false;
           } else {
             flash('Could not send — please try again');
+            if (result.status !== 400) offerMailFallback(); // 400 = visitor input, not our outage
           }
         })
-        .catch(function () { flash('Could not send — please try again'); })
+        .catch(function () { flash('Could not send — please try again'); offerMailFallback(); })
         .then(function () { btn.disabled = false; });
     });
   }

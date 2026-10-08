@@ -1,8 +1,6 @@
 // Vercel serverless function — contact form → email via SMTP.
-// Provider-agnostic: set the SMTP creds as Vercel env vars, no code change.
-// Required env: SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS, CONTACT_TO
-// Optional env: MAIL_FROM (defaults to "Basso Website <SMTP_USER>")
-const nodemailer = require('nodemailer');
+// Required env: SMTP_* (see _smtp.js), CONTACT_TO
+const { createTransport, mailFrom, describeSmtpError } = require('./_smtp');
 
 function clean(v, max) {
   return String(v == null ? '' : v).trim().slice(0, max);
@@ -37,21 +35,12 @@ module.exports = async function handler(req, res) {
     return res.status(400).json({ ok: false, error: 'Invalid email or empty message.' });
   }
 
-  const host = process.env.SMTP_HOST;
-  const user = process.env.SMTP_USER;
-  const pass = process.env.SMTP_PASS;
-  const to   = process.env.CONTACT_TO;
-  const port = parseInt(process.env.SMTP_PORT || '587', 10);
-  if (!host || !user || !pass || !to) {
+  const to = process.env.CONTACT_TO;
+  const transporter = createTransport();
+  if (!transporter || !to) {
+    console.error('contact: mail service not configured (SMTP_* / CONTACT_TO missing)');
     return res.status(500).json({ ok: false, error: 'Mail service not configured.' });
   }
-
-  const transporter = nodemailer.createTransport({
-    host: host,
-    port: port,
-    secure: port === 465, // 465 = implicit TLS, 587 = STARTTLS
-    auth: { user: user, pass: pass }
-  });
 
   const name = (firstName + ' ' + lastName).trim() || '(no name given)';
   const text =
@@ -64,7 +53,7 @@ module.exports = async function handler(req, res) {
 
   try {
     await transporter.sendMail({
-      from: process.env.MAIL_FROM || ('Basso Website <' + user + '>'),
+      from: mailFrom(),
       to: to,
       replyTo: name + ' <' + email + '>',
       subject: 'Website inquiry — ' + inquiry,
@@ -72,6 +61,7 @@ module.exports = async function handler(req, res) {
     });
     return res.status(200).json({ ok: true });
   } catch (err) {
+    console.error('contact: send failed — inquiry NOT delivered:', describeSmtpError(err));
     return res.status(502).json({ ok: false, error: 'Could not send right now.' });
   }
 };

@@ -1,9 +1,6 @@
 // Blob pathnames for news PDFs. The pathname is what a reader sees as the
 // filename when saving the document, so it carries the article title.
 // Underscore prefix keeps Vercel from exposing this as an endpoint.
-//
-// Shared by /api/publish-news and /api/rename-news-pdfs so a migrated PDF gets
-// byte-identical naming to a freshly published one.
 
 function slugify(title) {
   const slug = String(title || '')

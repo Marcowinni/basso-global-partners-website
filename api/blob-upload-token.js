@@ -5,6 +5,7 @@
 // Requires ADMIN_KEY, same gate as /api/publish-news — the token is scoped to
 // news/pdfs/ only.
 const { handleUpload } = require('@vercel/blob/client');
+const { isAdmin } = require('./_admin-auth');
 
 const MAX_UPLOAD_BYTES = 200 * 1024 * 1024;
 const PATH_PREFIX = 'news/pdfs/';
@@ -15,8 +16,7 @@ module.exports = async function handler(req, res) {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  const adminKey = process.env.ADMIN_KEY;
-  if (!adminKey || req.headers['x-admin-key'] !== adminKey) {
+  if (!isAdmin(req)) {
     return res.status(401).json({ error: 'Not authorized.' });
   }
 
@@ -41,6 +41,7 @@ module.exports = async function handler(req, res) {
     });
     return res.status(200).json(jsonResponse);
   } catch (err) {
+    console.warn('blob-upload-token: rejected:', err && err.message);
     return res.status(400).json({ error: (err && err.message) || 'Could not issue upload token.' });
   }
 };

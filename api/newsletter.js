@@ -1,9 +1,9 @@
 // Vercel serverless function — newsletter signup → email via SMTP.
 // Same SMTP creds as /api/contact.js. Sends straight to IR, no mail-client
 // round-trip for the visitor.
-// Required env: SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS
-// Optional env: NEWSLETTER_TO (defaults to ir@bassoglobalpartners.com), MAIL_FROM
-const nodemailer = require('nodemailer');
+// Required env: SMTP_* (see _smtp.js)
+// Optional env: NEWSLETTER_TO (defaults to ir@bassoglobalpartners.com)
+const { createTransport, mailFrom, describeSmtpError } = require('./_smtp');
 
 function clean(v, max) {
   return String(v == null ? '' : v).trim().slice(0, max);
@@ -32,25 +32,16 @@ module.exports = async function handler(req, res) {
     return res.status(400).json({ ok: false, error: 'Invalid email.' });
   }
 
-  const host = process.env.SMTP_HOST;
-  const user = process.env.SMTP_USER;
-  const pass = process.env.SMTP_PASS;
-  const to   = process.env.NEWSLETTER_TO || 'ir@bassoglobalpartners.com';
-  const port = parseInt(process.env.SMTP_PORT || '587', 10);
-  if (!host || !user || !pass) {
+  const to = process.env.NEWSLETTER_TO || 'ir@bassoglobalpartners.com';
+  const transporter = createTransport();
+  if (!transporter) {
+    console.error('newsletter: mail service not configured (SMTP_* missing)');
     return res.status(500).json({ ok: false, error: 'Mail service not configured.' });
   }
 
-  const transporter = nodemailer.createTransport({
-    host: host,
-    port: port,
-    secure: port === 465, // 465 = implicit TLS, 587 = STARTTLS
-    auth: { user: user, pass: pass }
-  });
-
   try {
     await transporter.sendMail({
-      from: process.env.MAIL_FROM || ('Basso Website <' + user + '>'),
+      from: mailFrom(),
       to: to,
       replyTo: email,
       subject: 'Newsletter subscription request',
@@ -58,6 +49,7 @@ module.exports = async function handler(req, res) {
     });
     return res.status(200).json({ ok: true });
   } catch (err) {
+    console.error('newsletter: send failed — signup NOT delivered:', describeSmtpError(err));
     return res.status(502).json({ ok: false, error: 'Could not send right now.' });
   }
 };

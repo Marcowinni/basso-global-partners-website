@@ -6,22 +6,15 @@
 // The PDF itself is uploaded directly from the browser to Blob via
 // /api/blob-upload-token (bypasses the function body-size limit) — this
 // endpoint only ever receives small JSON metadata + the resulting blob URL.
-const { list, put, rename } = require('@vercel/blob');
+const { rename } = require('@vercel/blob');
 const { pdfPathname } = require('./_slug');
+const { readNews, writeNews } = require('./_news-feed');
+const { isAdmin } = require('./_admin-auth');
 
-const NEWS_PATH = 'news/news.json';
 const PDF_URL_RE = /^https:\/\/[a-z0-9-]+\.public\.blob\.vercel-storage\.com\/news\/pdfs\/.+\.pdf$/i;
 
 function clean(v, max) {
   return String(v == null ? '' : v).trim().slice(0, max);
-}
-
-async function readNews() {
-  const { blobs } = await list({ prefix: NEWS_PATH });
-  const entry = blobs.find((b) => b.pathname === NEWS_PATH);
-  if (!entry) return [];
-  const res = await fetch(entry.url + '?t=' + Date.now());
-  return res.ok ? await res.json() : [];
 }
 
 module.exports = async function handler(req, res) {
@@ -30,8 +23,7 @@ module.exports = async function handler(req, res) {
     return res.status(405).json({ ok: false, error: 'Method not allowed' });
   }
 
-  const adminKey = process.env.ADMIN_KEY;
-  if (!adminKey || req.headers['x-admin-key'] !== adminKey) {
+  if (!isAdmin(req)) {
     return res.status(401).json({ ok: false, error: 'Not authorized.' });
   }
 
@@ -55,6 +47,9 @@ module.exports = async function handler(req, res) {
   }
 
   try {
+    // Read first: if the feed can't be read, stop before touching anything.
+    const items = await readNews();
+
     // Give the blob a title-based pathname so the reader's saved file is named
     // after the article. Cosmetic — never worth failing an otherwise good
     // publish, so a failure here keeps the upload URL as-is.
@@ -66,10 +61,11 @@ module.exports = async function handler(req, res) {
         contentType: 'application/pdf'
       });
       finalPdfUrl = renamed.url;
-    } catch (e) { /* keep pdfUrl */ }
+    } catch (e) {
+      console.warn('publish-news: PDF rename failed, keeping upload URL:', e && e.message);
+    }
 
-    const items = await readNews();
-    items.push({
+    const updated = items.concat([{
       id: id,
       title: title,
       date: date,
@@ -78,18 +74,12 @@ module.exports = async function handler(req, res) {
       pdf: finalPdfUrl,
       pdfName: pdfName,
       created: Date.now()
-    });
+    }]);
 
-    await put(NEWS_PATH, JSON.stringify(items), {
-      access: 'public',
-      addRandomSuffix: false,
-      allowOverwrite: true,
-      contentType: 'application/json',
-      cacheControlMaxAge: 60
-    });
-
+    await writeNews(updated, items);
     return res.status(200).json({ ok: true, id: id });
   } catch (err) {
+    console.error('publish-news: failed:', err);
     return res.status(502).json({ ok: false, error: 'Could not publish right now.' });
   }
 };
